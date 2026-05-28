@@ -20,7 +20,7 @@
     --toggle-bg:      #e5e5ea;
     --arrow-bg:       #e8e8ed;
     --arrow-hover:    #d1d1d6;
-    --ball-size:      58px;
+    --ball-size:      66px;
   }
   [data-theme="dark"] {
     --bg:             #111111;
@@ -168,12 +168,12 @@
   }
   .card:hover { transform: translateY(-2px); }
 
-  /* cascade animation */
+  /* cascade animation — 더 느리게 */
   @keyframes cascade {
-    from { opacity: 0; transform: translateY(18px); }
+    from { opacity: 0; transform: translateY(22px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  .ca { animation: cascade .9s cubic-bezier(.22,1,.36,1) both; }
+  .ca { animation: cascade 1.4s cubic-bezier(.22,1,.36,1) both; }
 
   /* 카드 내부 — 목업 텍스트 스타일 */
   .card-label {
@@ -204,7 +204,7 @@
     width: var(--ball-size); height: var(--ball-size);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 15px; font-weight: 700;
+    font-size: 17px; font-weight: 700;
     justify-self: center;
   }
   .b-y { background: #FFB800; color: #3d2c00; }
@@ -262,7 +262,7 @@
   footer strong { color: #f5f5f7; }
 
   @media (max-width: 480px) {
-    :root { --ball-size: 52px; }
+    :root { --ball-size: 58px; }
     .card { flex: 0 0 78vw; min-height: 400px; }
     .week-title { font-size: 26px; }
     .toggle-label { display: none; }
@@ -403,19 +403,27 @@ car.addEventListener('mousedown',e=>{dr={on:true,sx:e.pageX,sl:car.scrollLeft};c
 document.addEventListener('mouseup',()=>{dr.on=false;car.classList.remove('grabbing');});
 car.addEventListener('mousemove',e=>{if(!dr.on)return;e.preventDefault();car.scrollLeft=dr.sl-(e.pageX-dr.sx);});
 
-/* easeOutQuint smooth scroll */
+/* easeInOutQuart — 천천히 출발 → 가속 → 부드럽게 감속 (더 느리고 우아한 느낌) */
 let raf=null;
 function appleScroll(el,to,ms){
   if(raf){cancelAnimationFrame(raf);raf=null;}
-  const from=el.scrollLeft,dist=to-from;let t0=null;
-  const ease=t=>1-Math.pow(1-t,5);
+  const from=el.scrollLeft,dist=to-from;
+  if(Math.abs(dist)<1)return;
+  let t0=null;
+  el.style.scrollSnapType='none';
+  const ease=t=>t<.5?8*t*t*t*t:1-Math.pow(-2*t+2,4)/2;
   (function tick(now){
     if(!t0)t0=now;
     const p=Math.min((now-t0)/ms,1);
     el.scrollLeft=from+dist*ease(p);
     updateArrows();
-    if(p<1)raf=requestAnimationFrame(tick);
-    else{raf=null;updateDots();}
+    if(p<1){
+      raf=requestAnimationFrame(tick);
+    } else {
+      raf=null;
+      el.style.scrollSnapType='x mandatory';
+      updateDots();
+    }
   })(performance.now());
 }
 
@@ -424,9 +432,9 @@ const maxIdx=()=>Math.max(0,(car.querySelectorAll('.card').length||10)-1);
 
 function slide(d){
   const cur=Math.round(car.scrollLeft/cw());
-  appleScroll(car,Math.max(0,Math.min(cur+d,maxIdx()))*cw(),420);
+  appleScroll(car,Math.max(0,Math.min(cur+d,maxIdx()))*cw(),850);
 }
-function goCard(i){appleScroll(car,i*cw(),420);}
+function goCard(i){appleScroll(car,i*cw(),850);}
 
 function updateDots(){
   const idx=Math.round(car.scrollLeft/cw());
@@ -494,14 +502,14 @@ function generate(){
     const nums=s.fn();
     const sum=nums.reduce((a,b)=>a+b,0);
     const balls=nums.map(n=>`<div class="ball ${bc(n)}">${n}</div>`).join('');
-    const base=i*100;
+    const base=i*150;
     return`<div class="card">
       <div class="card-label ca" style="animation-delay:${base}ms">패턴 ${String(i+1).padStart(2,'0')}</div>
-      <div class="card-name  ca" style="animation-delay:${base+80}ms">${s.name}</div>
-      <div class="card-desc  ca" style="animation-delay:${base+155}ms">${s.desc}</div>
-      <div class="card-divider ca" style="animation-delay:${base+210}ms"></div>
-      <div class="balls       ca" style="animation-delay:${base+265}ms">${balls}</div>
-      <div class="card-sum    ca" style="animation-delay:${base+325}ms">합계 ${sum}</div>
+      <div class="card-name  ca" style="animation-delay:${base+100}ms">${s.name}</div>
+      <div class="card-desc  ca" style="animation-delay:${base+190}ms">${s.desc}</div>
+      <div class="card-divider ca" style="animation-delay:${base+265}ms"></div>
+      <div class="balls       ca" style="animation-delay:${base+330}ms">${balls}</div>
+      <div class="card-sum    ca" style="animation-delay:${base+405}ms">합계 ${sum}</div>
     </div>`;
   }).join('');
 
