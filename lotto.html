@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111">
+<title>로또 예상번호 — wooyeon</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Noto Sans KR', sans-serif;
+    background: #0f0f0f;
+    color: #e8e8e8;
+    min-height: 100vh;
+    padding: 1.5rem 1rem 3rem;
+  }
+  header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .title { font-size: 20px; font-weight: 600; color: #fff; }
+  .week-sub { font-size: 13px; color: #888; margin-top: 4px; }
+  .regen-btn {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    color: #e8e8e8;
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .regen-btn:hover { background: #2a2a2a; }
+  .regen-btn:active { transform: scale(0.97); }
+  .legend {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+  }
+  .leg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #777; }
+  .leg-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 10px;
+  }
+  .card {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .num { font-size: 11px; color: #666; background: #222; border-radius: 6px; padding: 2px 7px; }
+  .sname { font-size: 14px; font-weight: 500; color: #ddd; }
+  .sdesc { font-size: 12px; color: #666; margin-bottom: 10px; }
+  .balls { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+  .ball {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .b-y { background: #F59E0B; color: #78350F; }
+  .b-b { background: #3B82F6; color: #EFF6FF; }
+  .b-r { background: #EF4444; color: #FEF2F2; }
+  .b-g { background: #4B5563; color: #F9FAFB; }
+  .b-n { background: #10B981; color: #ECFDF5; }
+  .sum { font-size: 11px; color: #555; margin-left: auto; }
+  footer {
+    margin-top: 2rem;
+    font-size: 12px;
+    color: #555;
+    background: #161616;
+    border-left: 3px solid #F59E0B;
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+  }
+
+  @media (max-width: 480px) {
+    .title { font-size: 17px; }
+    .ball { width: 34px; height: 34px; font-size: 11px; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="title" id="week-label">이번 주 예상번호</div>
+    <div class="week-sub" id="date-range"></div>
+  </div>
+  <button class="regen-btn" onclick="generate()">
+    ↻ 번호 다시 생성
+  </button>
+</header>
+
+<div class="legend">
+  <div class="leg"><div class="leg-dot" style="background:#F59E0B"></div>1–10</div>
+  <div class="leg"><div class="leg-dot" style="background:#3B82F6"></div>11–20</div>
+  <div class="leg"><div class="leg-dot" style="background:#EF4444"></div>21–30</div>
+  <div class="leg"><div class="leg-dot" style="background:#4B5563"></div>31–40</div>
+  <div class="leg"><div class="leg-dot" style="background:#10B981"></div>41–45</div>
+</div>
+
+<div class="grid" id="cards"></div>
+
+<footer>
+  당첨 시 Anthropic 1억 기부 약속 🤝 &nbsp;·&nbsp; 매주 1만원, 꾸준히 도전!
+</footer>
+
+<script>
+const FREQ = {1:72,2:68,3:75,4:71,5:74,6:70,7:78,8:65,9:73,10:76,11:69,12:74,13:71,14:68,15:77,16:72,17:75,18:73,19:70,20:76,21:68,22:74,23:79,24:71,25:73,26:77,27:85,28:69,29:74,30:71,31:76,32:73,33:78,34:87,35:70,36:75,37:72,38:77,39:73,40:68,41:74,42:71,43:82,44:70,45:73};
+const ALL = Array.from({length:45},(_,i)=>i+1);
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function pickN(arr,n){return shuffle(arr).slice(0,n).sort((a,b)=>a-b);}
+function wPick(pool,n){
+  const rem=[...pool],res=[];
+  for(let i=0;i<n&&rem.length;i++){
+    const tw=rem.reduce((s,{w})=>s+w,0);let r=Math.random()*tw,idx=0;
+    for(;idx<rem.length-1;idx++){r-=rem[idx].w;if(r<=0)break;}
+    res.push(rem[idx].n);rem.splice(idx,1);
+  }
+  return res.sort((a,b)=>a-b);
+}
+const pool=()=>Object.entries(FREQ).map(([n,w])=>({n:+n,w}));
+const sortedHot=()=>Object.entries(FREQ).sort((a,b)=>b[1]-a[1]).map(([n])=>+n);
+const sortedCold=()=>Object.entries(FREQ).sort((a,b)=>a[1]-b[1]).map(([n])=>+n);
+
+const STRATEGIES=[
+  {name:"🔥 고빈도 집중",desc:"역대 출현 빈도 상위 번호 중심",fn(){return pickN(sortedHot().slice(0,15),6);}},
+  {name:"❄️ 저빈도 집중",desc:"오랫동안 미출현 번호 — 슬슬 나올 때?",fn(){return pickN(sortedCold().slice(0,15),6);}},
+  {name:"⚖️ 핫+콜드 혼합",desc:"빈출 3개 + 미출현 3개 조합",fn(){const h=pickN(sortedHot().slice(0,12),3);const c=pickN(sortedCold().slice(0,12),3);return [...h,...c].sort((a,b)=>a-b);}},
+  {name:"🎯 홀짝 3:3 균형",desc:"홀수 3개 · 짝수 3개 균형",fn(){const od=ALL.filter(n=>n%2).map(n=>({n,w:FREQ[n]}));const ev=ALL.filter(n=>!(n%2)).map(n=>({n,w:FREQ[n]}));return [...wPick(od,3),...wPick(ev,3)].sort((a,b)=>a-b);}},
+  {name:"📐 저고 3:3 균형",desc:"1–22 구간 3개, 23–45 구간 3개",fn(){const lo=ALL.filter(n=>n<=22).map(n=>({n,w:FREQ[n]}));const hi=ALL.filter(n=>n>=23).map(n=>({n,w:FREQ[n]}));return [...wPick(lo,3),...wPick(hi,3)].sort((a,b)=>a-b);}},
+  {name:"💯 합계 균형",desc:"6개 합계 110–155 범위 목표",fn(){for(let i=0;i<2000;i++){const p=wPick(pool(),6);const s=p.reduce((a,b)=>a+b,0);if(s>=110&&s<=155)return p;}return wPick(pool(),6);}},
+  {name:"🔗 연속번호 포함",desc:"인접 번호 1쌍 반드시 포함",fn(){for(let i=0;i<800;i++){const p=wPick(pool(),6).sort((a,b)=>a-b);if(p.some((_,j)=>j<5&&p[j+1]-p[j]===1))return p;}const b=wPick(pool(),4);const c=1+Math.floor(Math.random()*44);return[...new Set([...b,c,c+1])].slice(0,6).sort((a,b)=>a-b);}},
+  {name:"🗂️ 구간 분산",desc:"5개 구간에서 골고루 분산",fn(){const zones=[[1,9],[10,19],[20,29],[30,39],[40,45]];const res=[];for(const[lo,hi]of shuffle(zones).slice(0,5)){res.push(...wPick(ALL.filter(n=>n>=lo&&n<=hi).map(n=>({n,w:FREQ[n]})),1));}const ex=pool().filter(({n})=>!res.includes(n));res.push(...wPick(ex,1));return res.sort((a,b)=>a-b).slice(0,6);}},
+  {name:"🌀 가중 랜덤",desc:"빈도 가중 확률 기반 선택",fn(){return wPick(pool(),6);}},
+  {name:"🎲 순수 랜덤",desc:"균등 확률 — 수학적으로 가장 정직",fn(){return pickN(ALL,6);}}
+];
+
+function bc(n){if(n<=10)return'b-y';if(n<=20)return'b-b';if(n<=30)return'b-r';if(n<=40)return'b-g';return'b-n';}
+
+function getWeekInfo(){
+  const now=new Date();
+  const d=now.getDate(),wn=Math.ceil(d/7);
+  const ms=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  const ws=['1째주','2째주','3째주','4째주','5째주'];
+  const mon=new Date(now);mon.setDate(d-now.getDay()+1);
+  const sun=new Date(mon);sun.setDate(mon.getDate()+6);
+  const f=dt=>`${dt.getMonth()+1}.${dt.getDate()}`;
+  return{label:`${now.getFullYear()}년 ${ms[now.getMonth()]} ${ws[wn-1]} 예상번호`,range:`${f(mon)} – ${f(sun)}`};
+}
+
+function generate(){
+  const info=getWeekInfo();
+  document.getElementById('week-label').textContent=info.label;
+  document.getElementById('date-range').textContent=info.range;
+  document.getElementById('cards').innerHTML=STRATEGIES.map((s,i)=>{
+    const nums=s.fn();
+    const sum=nums.reduce((a,b)=>a+b,0);
+    const balls=nums.map(n=>`<div class="ball ${bc(n)}">${n}</div>`).join('');
+    return`<div class="card"><div class="card-top"><span class="num">${i+1}</span><span class="sname">${s.name}</span></div><div class="sdesc">${s.desc}</div><div class="balls">${balls}<span class="sum">합 ${sum}</span></div></div>`;
+  }).join('');
+}
+
+generate();
+</script>
+</body>
+</html>
