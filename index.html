@@ -59,6 +59,13 @@
   .nav-left { display: flex; align-items: center; gap: 10px; }
   .nav-logo  { font-size: 16px; font-weight: 600; color: var(--text-primary); letter-spacing: -.3px; text-decoration: none; transition: color .35s; }
   .nav-logo em { color: var(--accent); font-style: normal; }
+  .nav-version {
+    font-size: 10px; font-weight: 600; letter-spacing: .04em;
+    color: var(--text-tertiary);
+    background: var(--arrow-bg);
+    padding: 2px 7px; border-radius: 20px;
+    transition: color .35s, background .35s;
+  }
   .nav-date  { font-size: 12px; color: var(--text-secondary); transition: color .35s; }
 
   .toggle-wrap  { display: flex; align-items: center; gap: 7px; }
@@ -275,6 +282,7 @@
 <nav>
   <div class="nav-left">
     <a class="nav-logo" href="#">Lotto<em>.</em></a>
+    <span class="nav-version">v1.0</span>
     <span class="nav-date" id="nav-date"></span>
   </div>
   <div class="toggle-wrap">
