@@ -180,7 +180,7 @@
     from { opacity: 0; transform: translateY(22px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  .ca { animation: cascade 1.4s cubic-bezier(.22,1,.36,1) both; }
+  .ca { animation: cascade 1.8s cubic-bezier(.22,1,.36,1) both; }
 
   /* 카드 내부 — 목업 텍스트 스타일 */
   .card-label {
@@ -282,7 +282,7 @@
 <nav>
   <div class="nav-left">
     <a class="nav-logo" href="#">Lotto<em>.</em></a>
-    <span class="nav-version">v1.0</span>
+    <span class="nav-version">v1.1</span>
     <span class="nav-date" id="nav-date"></span>
   </div>
   <div class="toggle-wrap">
@@ -510,14 +510,14 @@ function generate(){
     const nums=s.fn();
     const sum=nums.reduce((a,b)=>a+b,0);
     const balls=nums.map(n=>`<div class="ball ${bc(n)}">${n}</div>`).join('');
-    const base=i*150;
+    const base=i*190;
     return`<div class="card">
       <div class="card-label ca" style="animation-delay:${base}ms">패턴 ${String(i+1).padStart(2,'0')}</div>
-      <div class="card-name  ca" style="animation-delay:${base+100}ms">${s.name}</div>
-      <div class="card-desc  ca" style="animation-delay:${base+190}ms">${s.desc}</div>
-      <div class="card-divider ca" style="animation-delay:${base+265}ms"></div>
-      <div class="balls       ca" style="animation-delay:${base+330}ms">${balls}</div>
-      <div class="card-sum    ca" style="animation-delay:${base+405}ms">합계 ${sum}</div>
+      <div class="card-name  ca" style="animation-delay:${base+130}ms">${s.name}</div>
+      <div class="card-desc  ca" style="animation-delay:${base+245}ms">${s.desc}</div>
+      <div class="card-divider ca" style="animation-delay:${base+340}ms"></div>
+      <div class="balls       ca" style="animation-delay:${base+420}ms">${balls}</div>
+      <div class="card-sum    ca" style="animation-delay:${base+510}ms">합계 ${sum}</div>
     </div>`;
   }).join('');
 
