@@ -251,7 +251,24 @@
     transition: opacity .9s cubic-bezier(.22,1,.36,1) .1s, transform .9s cubic-bezier(.22,1,.36,1) .1s;
   }
   .recent-section.visible { opacity: 1; transform: translateY(0); }
-  .recent-title { font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 12px; padding-top: 12px; border-top: 1px solid var(--border); transition: color .35s, border-color .35s; }
+  .recent-title {
+    font-size: clamp(28px, 7vw, 42px);
+    font-weight: 800;
+    letter-spacing: -.035em;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    padding-top: 0;
+    border-top: none;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 1.0s cubic-bezier(.22,1,.36,1), transform 1.0s cubic-bezier(.22,1,.36,1), color .35s;
+  }
+  .recent-title.visible { opacity: 1; transform: translateY(0); }
+  .recent-link-card {
+    opacity: 0; transform: translateY(16px);
+    transition: opacity 1.0s cubic-bezier(.22,1,.36,1) .15s, transform 1.0s cubic-bezier(.22,1,.36,1) .15s, background .35s, border-color .35s;
+  }
+  .recent-link-card.visible { opacity: 1; transform: translateY(0); }
   .recent-grid  { display: flex; flex-direction: column; gap: 8px; }
   .recent-row   { background: var(--card); border-radius: 14px; border: 1px solid var(--border); padding: 13px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; transition: background .35s, border-color .35s; }
   .recent-meta  { min-width: 90px; }
@@ -262,6 +279,23 @@
   .bonus-sep { font-size: 14px; color: var(--text-tertiary); }
   .recent-loading,.recent-error { font-size: 13px; color: var(--text-tertiary); text-align: center; padding: 16px; }
   .recent-error a { color: var(--accent); text-decoration: none; }
+  .recent-link-card {
+    background: var(--card); border-radius: 14px; border: 1px solid var(--border);
+    padding: 16px 18px; display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+    transition: background .35s, border-color .35s;
+  }
+  .recent-link-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; transition: color .35s; }
+  .recent-link-desc  { font-size: 12px; color: var(--text-tertiary); transition: color .35s; }
+  .recent-link-btn {
+    display: inline-flex; align-items: center;
+    background: var(--accent); color: #fff;
+    font-size: 13px; font-weight: 500;
+    padding: 9px 16px; border-radius: 980px;
+    text-decoration: none; white-space: nowrap;
+    transition: background .2s, transform .2s;
+  }
+  .recent-link-btn:hover { background: #0077ed; transform: scale(1.03); }
 
   /* ── FOOTER ── */
   footer { background: #1d1d1f; color: #6e6e73; text-align: center; padding: 28px 24px; font-size: 12px; line-height: 1.75; opacity: 0; transform: translateY(16px); transition: opacity .8s cubic-bezier(.22,1,.36,1), transform .8s cubic-bezier(.22,1,.36,1); }
@@ -282,7 +316,7 @@
 <nav>
   <div class="nav-left">
     <a class="nav-logo" href="#">Lotto<em>.</em></a>
-    <span class="nav-version">v1.1</span>
+    <span class="nav-version">v1.7</span>
     <span class="nav-date" id="nav-date"></span>
   </div>
   <div class="toggle-wrap">
@@ -530,37 +564,35 @@ function generate(){
     const el=document.getElementById(id);
     if(el){el.classList.remove('visible');requestAnimationFrame(()=>io.observe(el));}
   });
+  /* recent-title 별도 등록 */
+  const rt=document.querySelector('.recent-title');
+  if(rt){rt.classList.remove('visible');requestAnimationFrame(()=>io.observe(rt));}
 }
 
-/* ── RECENT DRAWS ── */
+/* ── RECENT DRAWS — allorigins CORS 프록시 사용 ── */
 function calcDrawNo(){return Math.floor((new Date()-new Date('2002-12-07'))/(7*864e5))+1;}
 const bbc=n=>n<=10?'b-y':n<=20?'b-b':n<=30?'b-r':n<=40?'b-g':'b-n';
-async function loadRecentDraws(){
-  const grid=document.getElementById('recent-grid');
+
+/* ── RECENT DRAWS — 외부 프록시 CORS 차단으로 링크 제공 ── */
+function calcDrawNo(){return Math.floor((new Date()-new Date('2002-12-07'))/(7*864e5))+1;}
+
+function loadRecentDraws(){
   const latest=calcDrawNo()-1;
-  const draws=[];
-  for(let i=0;i<4;i++){
-    try{
-      const r=await fetch(`https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${latest-i}`);
-      const d=await r.json();
-      if(d.returnValue==='success')draws.push(d);
-    }catch(e){}
-  }
-  if(!draws.length){
-    grid.innerHTML=`<div class="recent-error">동행복권 서버 직접 접근 제한됨<br><a href="https://www.dhlottery.co.kr/gameResult.do?method=byWin" target="_blank">동행복권에서 확인 →</a></div>`;
-    return;
-  }
-  grid.innerHTML=draws.map(d=>{
-    const nums=[d.drwtNo1,d.drwtNo2,d.drwtNo3,d.drwtNo4,d.drwtNo5,d.drwtNo6];
-    return`<div class="recent-row">
-      <div class="recent-meta"><div class="recent-drw">제 ${d.drwNo}회</div><div class="recent-date">${d.drwNoDate}</div></div>
-      <div class="recent-balls">
-        ${nums.map(n=>`<div class="rball ${bbc(n)}">${n}</div>`).join('')}
-        <span class="bonus-sep">+</span>
-        <div class="rball ${bbc(d.bnusNo)}">${d.bnusNo}</div>
+  document.getElementById('recent-grid').innerHTML=`
+    <div class="recent-link-card">
+      <div class="recent-link-info">
+        <div class="recent-link-title">최근 당첨번호 확인</div>
+        <div class="recent-link-desc">예상 최신 회차 · 제 ${latest}회</div>
       </div>
+      <a class="recent-link-btn"
+         href="https://www.dhlottery.co.kr/gameResult.do?method=byWin"
+         target="_blank" rel="noopener">
+        동행복권 바로가기 →
+      </a>
     </div>`;
-  }).join('');
+  /* 카드도 별도 observer 등록 */
+  const card=document.querySelector('.recent-link-card');
+  if(card) io.observe(card);
 }
 
 generate();
