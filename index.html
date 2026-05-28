@@ -4,229 +4,292 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#f5f5f7" id="theme-color-meta">
-<title>Lotto — 이번 주 예상번호1</title>
+<title>Lotto — 이번 주 예상번호</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #f5f5f7;
-    --card: #ffffff;
-    --text-primary: #1d1d1f;
+    --bg:             #ffffff;
+    --hero-bg:        #f5f5f7;
+    --card:           #ffffff;          /* 애플 카드 = 순백 */
+    --text-primary:   #1d1d1f;
     --text-secondary: #6e6e73;
-    --text-tertiary: #a1a1a6;
-    --accent: #0071e3;
-    --border: rgba(0,0,0,0.08);
-    --hero-bg: #000000;
-    --nav-bg: rgba(245,245,247,0.85);
-    --footer-bg: #000000;
-    --footer-border: #2a2a2a;
-    --card-shadow: rgba(0,0,0,0.10);
-    --toggle-bg: #e5e5ea;
-    --ball-size: 52px;
+    --text-tertiary:  #aeaeb2;
+    --accent:         #0071e3;
+    --border:         rgba(0,0,0,0.08); /* 애플 카드 테두리 = 극도로 얇고 투명 */
+    --nav-bg:         rgba(255,255,255,0.88);
+    --toggle-bg:      #e5e5ea;
+    --arrow-bg:       #e8e8ed;
+    --arrow-hover:    #d1d1d6;
+    --ball-size:      58px;
   }
   [data-theme="dark"] {
-    --bg: #000000;
-    --card: #1c1c1e;
-    --text-primary: #f5f5f7;
+    --bg:             #000000;
+    --hero-bg:        #111111;
+    --card:           #1c1c1e;
+    --text-primary:   #f5f5f7;
     --text-secondary: #aeaeb2;
-    --text-tertiary: #636366;
-    --border: rgba(255,255,255,0.08);
-    --hero-bg: #1c1c1e;
-    --nav-bg: rgba(0,0,0,0.85);
-    --footer-bg: #1c1c1e;
-    --footer-border: #2c2c2e;
-    --card-shadow: rgba(0,0,0,0.5);
-    --toggle-bg: #3a3a3c;
+    --text-tertiary:  #48484a;
+    --border:         rgba(255,255,255,0.08);
+    --nav-bg:         rgba(0,0,0,0.88);
+    --toggle-bg:      #3a3a3c;
+    --arrow-bg:       #2c2c2e;
+    --arrow-hover:    #3a3a3c;
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
     background: var(--bg);
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
-    transition: background 0.35s, color 0.35s;
+    transition: background .35s, color .35s;
     min-height: 100vh;
     overflow-x: hidden;
   }
 
   /* ── NAV ── */
   nav {
-    position: sticky; top: 0; z-index: 100;
+    position: sticky; top: 0; z-index: 200;
     background: var(--nav-bg);
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     border-bottom: 1px solid var(--border);
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 22px; height: 48px;
-    transition: background 0.35s, border-color 0.35s;
+    transition: background .35s, border-color .35s;
   }
-  .nav-left { display: flex; align-items: center; gap: 14px; }
-  .nav-logo { font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.3px; text-decoration: none; transition: color 0.35s; }
-  .nav-logo span { color: var(--accent); }
-  .nav-week { font-size: 12px; color: var(--text-secondary); transition: color 0.35s; }
-
-  /* ── TOGGLE ── */
-  .toggle-wrap { display: flex; align-items: center; gap: 7px; }
-  .toggle-label { font-size: 12px; color: var(--text-secondary); user-select: none; transition: color 0.35s; }
-  .toggle { position: relative; width: 42px; height: 24px; cursor: pointer; flex-shrink: 0; }
+  .nav-left { display: flex; align-items: center; gap: 12px; }
+  .nav-logo  { font-size: 17px; font-weight: 600; color: var(--text-primary); letter-spacing: -.3px; text-decoration: none; transition: color .35s; }
+  .nav-logo em { color: var(--accent); font-style: normal; }
+  .nav-week  { font-size: 12px; color: var(--text-secondary); transition: color .35s; }
+  .toggle-wrap  { display: flex; align-items: center; gap: 7px; }
+  .toggle-label { font-size: 12px; color: var(--text-secondary); user-select: none; transition: color .35s; }
+  .toggle { position: relative; width: 42px; height: 24px; cursor: pointer; }
   .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
-  .toggle-track { position: absolute; inset: 0; background: var(--toggle-bg); border-radius: 12px; transition: background 0.3s; }
-  .toggle-knob { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+  .toggle-track { position: absolute; inset: 0; background: var(--toggle-bg); border-radius: 12px; transition: background .3s; }
+  .toggle-knob  { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: #fff; border-radius: 50%; box-shadow: 0 1px 4px rgba(0,0,0,.3); transition: transform .25s cubic-bezier(.34,1.56,.64,1); }
   .toggle input:checked ~ .toggle-track { background: var(--accent); }
-  .toggle input:checked ~ .toggle-knob { transform: translateX(18px); }
+  .toggle input:checked ~ .toggle-knob  { transform: translateX(18px); }
   .toggle-icon { font-size: 13px; pointer-events: none; }
 
+  /* ── DATE BAR ── */
+  .date-bar {
+    background: var(--hero-bg);
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; padding: 10px 24px;
+    border-bottom: 1px solid var(--border);
+    transition: background .35s, border-color .35s;
+  }
+  .date-bar-dot  { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .date-bar-text { font-size: 13px; font-weight: 500; color: var(--text-secondary); letter-spacing: -.01em; transition: color .35s; }
+  .date-bar-text strong { color: var(--text-primary); font-weight: 600; }
+
   /* ── HERO ── */
-  .hero { background: var(--hero-bg); text-align: center; padding: 64px 24px 52px; transition: background 0.35s; }
-  .hero-eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #86868b; margin-bottom: 12px; }
-  .hero-title { font-size: clamp(36px,7vw,64px); font-weight: 700; letter-spacing: -0.025em; line-height: 1.05; color: #f5f5f7; margin-bottom: 16px; }
-  .hero-title span { color: #0071e3; }
-  .hero-sub { font-size: clamp(15px,2.2vw,18px); color: #86868b; max-width: 500px; margin: 0 auto 36px; line-height: 1.65; letter-spacing: -0.01em; }
+  .hero {
+    background: var(--hero-bg);
+    padding: 44px 24px 36px;
+    text-align: center;
+    transition: background .35s;
+  }
+  .hero-title {
+    font-size: clamp(32px, 6vw, 56px);
+    font-weight: 700; letter-spacing: -.03em; line-height: 1.06;
+    color: var(--text-primary); margin-bottom: 12px; transition: color .35s;
+  }
+  .hero-title em { color: var(--accent); font-style: normal; }
+  .hero-sub {
+    font-size: clamp(14px, 1.8vw, 16px);
+    color: var(--text-secondary); max-width: 400px; margin: 0 auto 28px;
+    line-height: 1.6; letter-spacing: -.01em; transition: color .35s;
+  }
 
   /* ── BUTTON ── */
   .hero-btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: #0071e3; color: #fff;
-    font-size: 15px; font-weight: 500;
-    padding: 13px 26px; border-radius: 980px; border: none;
-    cursor: pointer; font-family: inherit; letter-spacing: -0.01em;
+    display: inline-flex; align-items: center; gap: 9px;
+    background: var(--accent); color: #fff;
+    font-size: 15px; font-weight: 500; letter-spacing: -.01em;
+    padding: 12px 24px; border-radius: 980px; border: none;
+    cursor: pointer; font-family: inherit;
     position: relative; overflow: hidden;
-    transition: background 0.3s, transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+    transition: background .3s, transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;
   }
-  .hero-btn:hover { background: #0077ed; box-shadow: 0 8px 28px rgba(0,113,227,0.45); transform: scale(1.04); }
-  .hero-btn:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(0,113,227,0.3); }
-  .hero-btn .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.35); transform: scale(0); animation: ripple-anim 0.65s ease-out forwards; pointer-events: none; }
-  @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
-  .hero-btn:hover .btn-icon { animation: spin-icon 0.5s cubic-bezier(0.4,0,0.2,1); }
-  .hero-btn:active .btn-icon { animation: spin-rev 0.3s cubic-bezier(0.4,0,0.2,1); }
-  @keyframes spin-icon { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-  @keyframes spin-rev  { from{transform:rotate(0deg)} to{transform:rotate(-360deg)} }
-  .btn-icon { display:inline-flex; align-items:center; }
+  .hero-btn:hover { background: #0077ed; transform: scale(1.05); box-shadow: 0 8px 26px rgba(0,113,227,.4); }
+  .hero-btn:active { transform: scale(.96) !important; box-shadow: none !important; }
+  .hero-btn .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,.3); transform: scale(0); animation: ripple .8s ease-out forwards; pointer-events: none; }
+  @keyframes ripple { to { transform: scale(4.5); opacity: 0; } }
+  .btn-icon { display: inline-flex; align-items: center; }
+  .spinning .btn-icon svg { animation: spin360 1.0s cubic-bezier(.4,0,.15,1) both; }
+  @keyframes spin360 { from{transform:rotate(0)} to{transform:rotate(360deg)} }
 
   /* ── LEGEND ── */
   .legend-bar {
+    background: var(--hero-bg);
     display: flex; align-items: center; justify-content: center;
-    gap: 18px; flex-wrap: wrap; padding: 16px 24px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg); transition: background 0.35s, border-color 0.35s;
+    gap: 16px; flex-wrap: wrap; padding: 0 24px 20px;
+    transition: background .35s;
   }
-  .leg { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); font-weight:500; }
-  .leg-dot { width:11px; height:11px; border-radius:50%; }
+  .leg { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+  .leg-dot { width: 10px; height: 10px; border-radius: 50%; }
 
   /* ── SECTION HEADER ── */
   .section-header {
-    max-width: 1100px; margin: 0 auto;
-    padding: 36px 28px 20px;
-    display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+    max-width: 1060px; margin: 0 auto;
+    padding: 40px 32px 18px;
     opacity: 0; transform: translateY(16px);
-    transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+    transition: opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1);
   }
   .section-header.visible { opacity: 1; transform: translateY(0); }
-  .section-title { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); }
-  .dot-nav { display: flex; gap: 6px; align-items: center; }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-tertiary); cursor: pointer; transition: background 0.3s, transform 0.3s; }
-  .dot.active { background: var(--accent); transform: scale(1.3); }
+  .section-label { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 8px; transition: color .35s; }
+  .section-title { font-size: clamp(24px, 3.2vw, 32px); font-weight: 700; letter-spacing: -.025em; color: var(--text-primary); transition: color .35s; }
 
   /* ── CAROUSEL ── */
   .carousel-wrap {
-    position: relative;
-    opacity: 0; transform: translateY(32px);
-    transition: opacity 0.85s cubic-bezier(0.22,1,0.36,1), transform 0.85s cubic-bezier(0.22,1,0.36,1);
+    opacity: 0; transform: translateY(22px);
+    transition: opacity 1.0s cubic-bezier(.22,1,.36,1), transform 1.0s cubic-bezier(.22,1,.36,1);
+    padding-top: 8px;
   }
   .carousel-wrap.visible { opacity: 1; transform: translateY(0); }
+  .carousel-outer { position: relative; }
+  /* 좌우 페이드 마스크 */
+  .carousel-outer::before,.carousel-outer::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 32px; z-index: 2; pointer-events: none;
+  }
+  .carousel-outer::before { left: 0;  background: linear-gradient(to right, var(--bg), transparent); }
+  .carousel-outer::after  { right: 0; background: linear-gradient(to left,  var(--bg), transparent); }
 
   .carousel {
-    display: flex;
-    gap: 16px;
+    display: flex; gap: 16px;
     overflow-x: scroll;
     scroll-snap-type: x mandatory;
+    scroll-snap-stop: always;
+    scroll-padding-left: 32px;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    padding: 12px 28px 32px;
+    padding: 12px 32px 20px;
     cursor: grab;
   }
   .carousel::-webkit-scrollbar { display: none; }
-  .carousel.grabbing { cursor: grabbing; }
+  .carousel.grabbing { cursor: grabbing; user-select: none; }
 
-  /* edge fade masks */
-  .carousel-wrap::before,
-  .carousel-wrap::after {
-    content: ''; position: absolute; top: 0; bottom: 32px; width: 40px; z-index: 2; pointer-events: none;
-    transition: opacity 0.3s;
-  }
-  .carousel-wrap::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
-  .carousel-wrap::after  { right: 0; background: linear-gradient(to left,  var(--bg), transparent); }
-
-  /* ── CARD ── */
+  /* ── CARD — 애플 카드와 동일하게 ── */
   .card {
-    flex: 0 0 300px;
-    height: 420px;
+    flex: 0 0 288px;
+    min-height: 460px;
     scroll-snap-align: start;
     background: var(--card);
-    border-radius: 22px;
-    padding: 28px 26px 26px;
-    border: 1px solid var(--border);
+    border-radius: 18px;                   /* 애플 카드 라운딩 */
+    padding: 28px 26px 26px;               /* 여유있는 내부 여백 */
     display: flex; flex-direction: column;
-    box-shadow: 0 4px 20px var(--card-shadow);
-    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s, background 0.35s, border-color 0.35s;
-    user-select: none;
-    /* stagger handled inline */
-    opacity: 0; transform: translateX(40px);
+    border: 1px solid var(--border);       /* 극도로 얇고 투명한 테두리 */
+    transition: background .35s, border-color .35s, transform .3s cubic-bezier(.34,1.56,.64,1);
+    overflow: hidden;
   }
-  .card.snap-visible {
-    opacity: 1; transform: translateX(0);
-    transition:
-      opacity 0.75s cubic-bezier(0.22,1,0.36,1),
-      transform 0.75s cubic-bezier(0.22,1,0.36,1),
-      background 0.35s, border-color 0.35s, box-shadow 0.35s;
-  }
-  .card.snap-visible:hover { transform: translateY(-5px) scale(1.015); box-shadow: 0 18px 42px var(--card-shadow); }
+  /* 호버: 그림자 없이 살짝만 */
+  .card:hover { transform: translateY(-2px); }
 
-  .card-num { font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px; }
-  .card-name { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; color: var(--text-primary); margin-bottom: 6px; line-height: 1.15; transition: color 0.35s; }
-  .card-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.5; letter-spacing: -0.01em; transition: color 0.35s; flex: 1; }
-  .card-divider { height: 1px; background: var(--border); margin: 20px 0; }
-  .balls { display: flex; gap: 8px; flex-wrap: wrap; }
-  .ball { width: var(--ball-size); height: var(--ball-size); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
+  /* cascade animation */
+  @keyframes cascade {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .ca { animation: cascade .9s cubic-bezier(.22,1,.36,1) both; }
+
+  /* 애플 스타일 카드 내부 텍스트 */
+  .card-label {
+    /* 칩/뱃지 없이 순수 텍스트 — 애플 스타일 */
+    font-size: 12px;
+    font-weight: 400;                      /* regular weight */
+    color: var(--text-secondary);
+    letter-spacing: .01em;
+    margin-bottom: 12px;
+    transition: color .35s;
+  }
+  .card-name {
+    font-size: 24px;                       /* 애플카드 제목 더 크게 */
+    font-weight: 700;
+    letter-spacing: -.025em;
+    color: var(--text-primary);
+    line-height: 1.18;
+    margin-bottom: 10px;
+    transition: color .35s;
+  }
+  .card-desc {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.55;
+    letter-spacing: -.01em;
+    flex: 1;
+    transition: color .35s;
+  }
+  .card-divider { height: 1px; background: var(--border); margin: 20px 0; transition: background .35s; }
+
+  /* 3×2 ball grid */
+  .balls { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .ball  { width: var(--ball-size); height: var(--ball-size); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; justify-self: center; }
   .b-y { background: #FFB800; color: #3d2c00; }
   .b-b { background: #147EFB; color: #fff; }
   .b-r { background: #FF3B30; color: #fff; }
   .b-g { background: #636366; color: #fff; }
   .b-n { background: #34C759; color: #00381a; }
-  .card-sum { font-size: 12px; color: var(--text-tertiary); margin-top: 14px; font-weight: 500; transition: color 0.35s; }
+  .card-sum { font-size: 12px; color: var(--text-tertiary); margin-top: 14px; font-weight: 500; letter-spacing: .01em; transition: color .35s; }
 
-  /* prev/next arrows */
-  .arrow-wrap { max-width: 1100px; margin: 0 auto; display: flex; justify-content: flex-end; gap: 8px; padding: 0 28px 40px; }
-  .arrow-btn {
-    width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
-    background: var(--card); color: var(--text-primary);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 16px; line-height: 1;
-    transition: background 0.2s, transform 0.2s cubic-bezier(0.34,1.56,0.64,1), border-color 0.3s;
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: 8px; padding: 16px 36px 44px;
+    opacity: 0; transform: translateY(12px);
+    transition: opacity .8s cubic-bezier(.22,1,.36,1), transform .8s cubic-bezier(.22,1,.36,1);
   }
-  .arrow-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); transform: scale(1.12); }
-  .arrow-btn:active { transform: scale(0.94); }
+  .bottom-nav.visible { opacity: 1; transform: translateY(0); }
+  .dots { display: flex; gap: 6px; align-items: center; margin-right: 10px; }
+  .dot  { width: 7px; height: 7px; border-radius: 50%; background: var(--text-tertiary); cursor: pointer; border: none; padding: 0; transition: background .3s, transform .3s; }
+  .dot.on { background: var(--text-primary); transform: scale(1.35); }
+  .arr {
+    width: 36px; height: 36px; border-radius: 50%; border: none;
+    background: var(--arrow-bg); color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background .2s, transform .25s cubic-bezier(.34,1.56,.64,1), color .35s, opacity .2s;
+  }
+  .arr:hover  { background: var(--arrow-hover); transform: scale(1.12); }
+  .arr:active { transform: scale(.92); }
+  .arr:disabled { opacity: .35; cursor: default; transform: none !important; }
+
+  /* ── RECENT DRAWS ── */
+  .recent-section {
+    max-width: 1060px; margin: 0 auto;
+    padding: 8px 32px 48px;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity .9s cubic-bezier(.22,1,.36,1) .15s, transform .9s cubic-bezier(.22,1,.36,1) .15s;
+  }
+  .recent-section.visible { opacity: 1; transform: translateY(0); }
+  .recent-title { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 14px; padding-top: 12px; border-top: 1px solid var(--border); transition: color .35s, border-color .35s; }
+  .recent-grid  { display: flex; flex-direction: column; gap: 10px; }
+  .recent-row   { background: var(--card); border-radius: 14px; border: 1px solid var(--border); padding: 14px 18px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; transition: background .35s, border-color .35s; }
+  .recent-meta  { min-width: 100px; }
+  .recent-drw   { font-size: 13px; font-weight: 600; color: var(--text-primary); transition: color .35s; }
+  .recent-date  { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; transition: color .35s; }
+  .recent-balls { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .rball { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .bonus-sep { font-size: 14px; color: var(--text-tertiary); font-weight: 300; }
+  .recent-loading,.recent-error { font-size: 13px; color: var(--text-tertiary); text-align: center; padding: 20px; }
+  .recent-error a { color: var(--accent); text-decoration: none; }
 
   /* ── FOOTER ── */
-  footer {
-    background: var(--footer-bg); color: #6e6e73;
-    text-align: center; padding: 32px 24px;
-    font-size: 12px; line-height: 1.7;
-    border-top: 1px solid var(--footer-border);
-    transition: background 0.35s, border-color 0.35s;
-    opacity: 0; transform: translateY(20px);
-    transition: opacity 0.75s cubic-bezier(0.22,1,0.36,1), transform 0.75s cubic-bezier(0.22,1,0.36,1), background 0.35s, border-color 0.35s;
-  }
+  footer { background: #000; color: #6e6e73; text-align: center; padding: 32px 24px; font-size: 12px; line-height: 1.75; border-top: 1px solid #2a2a2a; opacity: 0; transform: translateY(20px); transition: opacity .8s cubic-bezier(.22,1,.36,1), transform .8s cubic-bezier(.22,1,.36,1); }
   footer.visible { opacity: 1; transform: translateY(0); }
   footer strong { color: #f5f5f7; }
 
   @media (max-width: 600px) {
-    :root { --ball-size: 44px; }
-    .card { flex: 0 0 78vw; height: 400px; padding: 24px 20px 22px; }
-    .card-name { font-size: 19px; }
-    .carousel { padding: 12px 20px 28px; }
-    .arrow-wrap, .section-header { padding-left: 20px; padding-right: 20px; }
+    :root { --ball-size: 50px; }
+    .card { flex: 0 0 76vw; min-height: 440px; padding: 24px 20px 22px; border-radius: 16px; }
+    .card-name { font-size: 20px; }
+    .carousel { padding: 8px 20px 16px; }
+    .section-header, .recent-section { padding-left: 20px; padding-right: 20px; }
+    .bottom-nav { padding: 12px 20px 36px; }
     .toggle-label { display: none; }
+    .hero { padding: 36px 20px 32px; }
   }
 </style>
 </head>
@@ -234,33 +297,40 @@
 
 <nav>
   <div class="nav-left">
-    <a class="nav-logo" href="#">Lotto<span>.</span></a>
+    <a class="nav-logo" href="#">Lotto<em>.</em></a>
     <span class="nav-week" id="nav-week"></span>
   </div>
-  <div class="toggle-wrap" role="group" aria-label="다크모드 설정">
-    <span class="toggle-label" id="toggle-label">라이트</span>
-    <label class="toggle" aria-label="다크모드 켜기/끄기">
-      <input type="checkbox" id="dark-toggle" onchange="toggleDark(this)">
+  <div class="toggle-wrap">
+    <span class="toggle-label" id="tlabel">라이트</span>
+    <label class="toggle" aria-label="다크모드">
+      <input type="checkbox" id="dtoggle" onchange="setDark(this)">
       <div class="toggle-track"></div>
       <div class="toggle-knob"></div>
     </label>
-    <span class="toggle-icon" id="toggle-icon">☀️</span>
+    <span class="toggle-icon" id="ticon">☀️</span>
   </div>
 </nav>
 
+<div class="date-bar">
+  <div class="date-bar-dot"></div>
+  <div class="date-bar-text" id="today-date"></div>
+</div>
+
 <section class="hero">
-  <p class="hero-eyebrow">Lotto 6/45 · 이번 주</p>
-  <h1 class="hero-title">예상번호 <span>10패턴</span></h1>
-  <p class="hero-sub">역대 출현 통계를 바탕으로 알고리즘 10가지가 각각 독립적으로 번호를 선택합니다!.</p>
-  <button class="hero-btn" onclick="generate(); addRipple(event,this)" aria-label="번호 다시 생성">
+  <h1 class="hero-title">예상번호 <em>10패턴</em></h1>
+  <p class="hero-sub">역대 출현 통계를 바탕으로 알고리즘 10가지가 각각 독립적으로 번호를 선택합니다.</p>
+  <button class="hero-btn" id="gen-btn" onclick="onGenerate(event)">
     <span class="btn-icon" aria-hidden="true">
-      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4.5A7 7 0 0 1 14.5 8M15 11.5A7 7 0 0 1 1.5 8"/><polyline points="1 1 1 4.5 4.5 4.5"/><polyline points="15 15 15 11.5 11.5 11.5"/></svg>
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M1 4.5A7 7 0 0 1 14.5 8M15 11.5A7 7 0 0 1 1.5 8"/>
+        <polyline points="1 1 1 4.5 4.5 4.5"/><polyline points="15 15 15 11.5 11.5 11.5"/>
+      </svg>
     </span>
     번호 다시 생성
   </button>
 </section>
 
-<div class="legend-bar" role="note" aria-label="공 색상 범례">
+<div class="legend-bar">
   <div class="leg"><div class="leg-dot" style="background:#FFB800"></div>1–10</div>
   <div class="leg"><div class="leg-dot" style="background:#147EFB"></div>11–20</div>
   <div class="leg"><div class="leg-dot" style="background:#FF3B30"></div>21–30</div>
@@ -268,178 +338,236 @@
   <div class="leg"><div class="leg-dot" style="background:#34C759"></div>41–45</div>
 </div>
 
-<div class="section-header" id="section-header">
-  <span class="section-title" id="section-date"></span>
-  <div class="dot-nav" id="dot-nav" role="tablist" aria-label="패턴 선택"></div>
+<div class="section-header" id="sec-hdr">
+  <div class="section-label">이번 주 예상번호</div>
+  <div class="section-title" id="sec-title"></div>
 </div>
 
-<div class="carousel-wrap" id="carousel-wrap">
-  <div class="carousel" id="carousel"></div>
+<div class="carousel-wrap" id="car-wrap">
+  <div class="carousel-outer">
+    <div class="carousel" id="car"></div>
+  </div>
 </div>
 
-<div class="arrow-wrap">
-  <button class="arrow-btn" onclick="scrollCarousel(-1)" aria-label="이전">‹</button>
-  <button class="arrow-btn" onclick="scrollCarousel(1)"  aria-label="다음">›</button>
+<div class="bottom-nav" id="bot-nav">
+  <div class="dots" id="dots"></div>
+  <button class="arr" id="arr-prev" onclick="slide(-1)" aria-label="이전">
+    <svg width="10" height="16" viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 2 2 8 8 14"/></svg>
+  </button>
+  <button class="arr" id="arr-next" onclick="slide(1)" aria-label="다음">
+    <svg width="10" height="16" viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 2 8 8 2 14"/></svg>
+  </button>
+</div>
+
+<div class="recent-section" id="recent-sec">
+  <div class="recent-title">최근 한 달 당첨번호</div>
+  <div class="recent-grid" id="recent-grid"><div class="recent-loading">불러오는 중...</div></div>
 </div>
 
 <footer id="footer">
-  <p>당첨 시 <strong>Anthropic 1억 기부</strong> 약속 🤝 &nbsp;·&nbsp; 매주 1만원, 꾸준히 도전!</p>
-  <p style="margin-top:8px">로또는 독립시행 — 과거 통계는 미래 확률에 영향을 주지 않습니다. 즐겁게 참고하세요.</p>
+  <p>당첨 시 <strong>Anthropic 1억 기부</strong> 약속 🤝 &nbsp;·&nbsp; 매주 1만원!</p>
+  <p style="margin-top:8px">로또는 독립시행 — 과거 통계는 미래 확률에 영향을 주지 않습니다.</p>
 </footer>
 
 <script>
 /* ── DARK MODE ── */
-function toggleDark(cb){
-  const dark=cb.checked;
-  document.documentElement.setAttribute('data-theme',dark?'dark':'light');
-  document.getElementById('toggle-label').textContent=dark?'다크':'라이트';
-  document.getElementById('toggle-icon').textContent=dark?'🌙':'☀️';
-  document.getElementById('theme-color-meta').content=dark?'#000000':'#f5f5f7';
-  try{localStorage.setItem('lotto-theme',dark?'dark':'light');}catch(e){}
+function setDark(cb){
+  const d=cb.checked;
+  document.documentElement.setAttribute('data-theme',d?'dark':'light');
+  document.getElementById('tlabel').textContent=d?'다크':'라이트';
+  document.getElementById('ticon').textContent=d?'🌙':'☀️';
+  document.getElementById('theme-color-meta').content=d?'#000':'#f5f5f7';
+  try{localStorage.setItem('lt',d?'1':'0');}catch(e){}
 }
 (function(){
-  try{
-    if(localStorage.getItem('lotto-theme')==='dark'){
-      document.documentElement.setAttribute('data-theme','dark');
-      document.getElementById('dark-toggle').checked=true;
-      document.getElementById('toggle-label').textContent='다크';
-      document.getElementById('toggle-icon').textContent='🌙';
-      document.getElementById('theme-color-meta').content='#000000';
-    }
-  }catch(e){}
+  try{if(localStorage.getItem('lt')==='1'){
+    document.documentElement.setAttribute('data-theme','dark');
+    document.getElementById('dtoggle').checked=true;
+    document.getElementById('tlabel').textContent='다크';
+    document.getElementById('ticon').textContent='🌙';
+    document.getElementById('theme-color-meta').content='#000';
+  }}catch(e){}
 })();
 
-/* ── RIPPLE ── */
-function addRipple(e,btn){
-  const r=btn.getBoundingClientRect(),size=Math.max(r.width,r.height);
-  const s=document.createElement('span');
-  s.className='ripple';
-  s.style.cssText=`width:${size}px;height:${size}px;left:${e.clientX-r.left-size/2}px;top:${e.clientY-r.top-size/2}px`;
-  btn.appendChild(s);
-  s.addEventListener('animationend',()=>s.remove());
+/* ── TODAY DATE ── */
+(function(){
+  const n=new Date();
+  const days=['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
+  const ms=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  document.getElementById('today-date').innerHTML=
+    `<strong>${n.getFullYear()}년 ${ms[n.getMonth()]} ${n.getDate()}일</strong> ${days[n.getDay()]}`;
+})();
+
+/* ── RIPPLE + SPIN ── */
+function makeRipple(e,btn){
+  const r=btn.getBoundingClientRect(),sz=Math.max(r.width,r.height);
+  const s=document.createElement('span');s.className='ripple';
+  s.style.cssText=`width:${sz}px;height:${sz}px;left:${e.clientX-r.left-sz/2}px;top:${e.clientY-r.top-sz/2}px`;
+  btn.appendChild(s);s.addEventListener('animationend',()=>s.remove());
+}
+function onGenerate(e){
+  const btn=document.getElementById('gen-btn');
+  makeRipple(e,btn);
+  btn.classList.add('spinning');
+  btn.addEventListener('animationend',()=>btn.classList.remove('spinning'),{once:true});
+  generate();
 }
 
-/* ── CAROUSEL DRAG ── */
-const car=document.getElementById('carousel');
-let isDown=false,startX=0,scrollLeft=0;
-car.addEventListener('mousedown',e=>{isDown=true;car.classList.add('grabbing');startX=e.pageX-car.offsetLeft;scrollLeft=car.scrollLeft;});
-car.addEventListener('mouseleave',()=>{isDown=false;car.classList.remove('grabbing');});
-car.addEventListener('mouseup',()=>{isDown=false;car.classList.remove('grabbing');});
-car.addEventListener('mousemove',e=>{if(!isDown)return;e.preventDefault();const x=e.pageX-car.offsetLeft;car.scrollLeft=scrollLeft-(x-startX)*1.2;});
+/* ── CAROUSEL ── */
+const car=document.getElementById('car');
 
-function scrollCarousel(dir){
-  const cardW=car.querySelector('.card')?.offsetWidth||300;
-  car.scrollBy({left:dir*(cardW+16),behavior:'smooth'});
+/* drag */
+let dr={on:false,sx:0,sl:0};
+car.addEventListener('mousedown',e=>{dr={on:true,sx:e.pageX,sl:car.scrollLeft};car.classList.add('grabbing');});
+document.addEventListener('mouseup',()=>{dr.on=false;car.classList.remove('grabbing');});
+car.addEventListener('mousemove',e=>{
+  if(!dr.on)return;e.preventDefault();
+  car.scrollLeft=dr.sl-(e.pageX-dr.sx);
+});
+
+/* ── 애플 스타일 커스텀 이징 스크롤 ── */
+/* easeOutQuint: 빠르게 시작 → 부드럽게 감속 (애플 물리 느낌) */
+let raf=null;
+function appleScroll(el,to,ms){
+  if(raf){cancelAnimationFrame(raf);raf=null;}
+  const from=el.scrollLeft, dist=to-from;
+  let t0=null;
+  const ease=t=>1-Math.pow(1-t,5);
+  (function tick(now){
+    if(!t0)t0=now;
+    const p=Math.min((now-t0)/ms,1);
+    el.scrollLeft=from+dist*ease(p);
+    updateArrows();
+    if(p<1)raf=requestAnimationFrame(tick);
+    else{raf=null;updateDots();}
+  })(performance.now());
 }
 
-/* ── DOT NAV ── */
+const cw=()=>(car.querySelector('.card')?.offsetWidth||288)+16;
+const maxIdx=()=>Math.max(0,(car.querySelectorAll('.card').length||10)-1);
+
+function slide(d){
+  const cur=Math.round(car.scrollLeft/cw());
+  const next=Math.max(0,Math.min(cur+d,maxIdx()));
+  appleScroll(car,next*cw(),420);
+}
+function goCard(i){appleScroll(car,i*cw(),420);}
+
+/* dots + arrows 상태 */
 function updateDots(){
-  const cards=car.querySelectorAll('.card');
-  const cardW=cards[0]?.offsetWidth||300;
-  const idx=Math.round(car.scrollLeft/(cardW+16));
-  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  const idx=Math.round(car.scrollLeft/cw());
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===idx));
 }
-car.addEventListener('scroll',updateDots,{passive:true});
+function updateArrows(){
+  const idx=Math.round(car.scrollLeft/cw());
+  const prev=document.getElementById('arr-prev');
+  const next=document.getElementById('arr-next');
+  if(prev)prev.disabled=idx<=0;
+  if(next)next.disabled=idx>=maxIdx();
+}
+car.addEventListener('scroll',()=>{updateDots();updateArrows();},{passive:true});
 
 /* ── INTERSECTION OBSERVER ── */
 const io=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}
-  });
-},{threshold:0.06});
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}});
+},{threshold:.05});
 
-const cardIO=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){e.target.classList.add('snap-visible');cardIO.unobserve(e.target);}
-  });
-},{threshold:0.08});
-
-function observeAll(){
-  ['section-header','carousel-wrap','footer'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el){el.classList.remove('visible');io.observe(el);}
-  });
-  document.querySelectorAll('.card').forEach(c=>{c.classList.remove('snap-visible');cardIO.observe(c);});
-}
-
-/* ── LOTTO ── */
+/* ── LOTTO LOGIC ── */
 const FREQ={1:72,2:68,3:75,4:71,5:74,6:70,7:78,8:65,9:73,10:76,11:69,12:74,13:71,14:68,15:77,16:72,17:75,18:73,19:70,20:76,21:68,22:74,23:79,24:71,25:73,26:77,27:85,28:69,29:74,30:71,31:76,32:73,33:78,34:87,35:70,36:75,37:72,38:77,39:73,40:68,41:74,42:71,43:82,44:70,45:73};
 const ALL=Array.from({length:45},(_,i)=>i+1);
-function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
-function pickN(arr,n){return shuffle(arr).slice(0,n).sort((a,b)=>a-b);}
-function wPick(p,n){
-  const rem=[...p],res=[];
-  for(let i=0;i<n&&rem.length;i++){
-    const tw=rem.reduce((s,{w})=>s+w,0);let r=Math.random()*tw,idx=0;
-    for(;idx<rem.length-1;idx++){r-=rem[idx].w;if(r<=0)break;}
-    res.push(rem[idx].n);rem.splice(idx,1);
-  }
-  return res.sort((a,b)=>a-b);
-}
-const pool=()=>Object.entries(FREQ).map(([n,w])=>({n:+n,w}));
-const sHot=()=>Object.entries(FREQ).sort((a,b)=>b[1]-a[1]).map(([n])=>+n);
-const sCold=()=>Object.entries(FREQ).sort((a,b)=>a[1]-b[1]).map(([n])=>+n);
+const sh=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];}return b;};
+const pN=(a,n)=>sh(a).slice(0,n).sort((x,y)=>x-y);
+function wP(p,n){const r=[...p],res=[];for(let i=0;i<n&&r.length;i++){const tw=r.reduce((s,{w})=>s+w,0);let rv=Math.random()*tw,idx=0;for(;idx<r.length-1;idx++){rv-=r[idx].w;if(rv<=0)break;}res.push(r[idx].n);r.splice(idx,1);}return res.sort((x,y)=>x-y);}
+const pl=()=>Object.entries(FREQ).map(([n,w])=>({n:+n,w}));
+const ht=()=>Object.entries(FREQ).sort((a,b)=>b[1]-a[1]).map(([n])=>+n);
+const cl=()=>Object.entries(FREQ).sort((a,b)=>a[1]-b[1]).map(([n])=>+n);
 
-const STRATS=[
-  {icon:"🔥",name:"고빈도 집중",desc:"역대 출현 빈도 상위 번호 중심으로 선택",fn(){return pickN(sHot().slice(0,15),6);}},
-  {icon:"❄️",name:"저빈도 집중",desc:"오랫동안 미출현 번호 위주로 선택",fn(){return pickN(sCold().slice(0,15),6);}},
-  {icon:"⚖️",name:"핫+콜드 혼합",desc:"빈출 3개 + 미출현 3개 균형 조합",fn(){return[...pickN(sHot().slice(0,12),3),...pickN(sCold().slice(0,12),3)].sort((a,b)=>a-b);}},
-  {icon:"◑",name:"홀짝 3:3 균형",desc:"홀수 3개 · 짝수 3개 균형 구성",fn(){return[...wPick(ALL.filter(n=>n%2).map(n=>({n,w:FREQ[n]})),3),...wPick(ALL.filter(n=>!(n%2)).map(n=>({n,w:FREQ[n]})),3)].sort((a,b)=>a-b);}},
-  {icon:"↕",name:"저고 3:3 균형",desc:"1–22 구간 3개, 23–45 구간 3개",fn(){return[...wPick(ALL.filter(n=>n<=22).map(n=>({n,w:FREQ[n]})),3),...wPick(ALL.filter(n=>n>=23).map(n=>({n,w:FREQ[n]})),3)].sort((a,b)=>a-b);}},
-  {icon:"Σ",name:"합계 균형",desc:"6개 합계 110–155 범위를 목표로 선택",fn(){for(let i=0;i<2000;i++){const p=wPick(pool(),6);if(p.reduce((a,b)=>a+b,0)>=110&&p.reduce((a,b)=>a+b,0)<=155)return p;}return wPick(pool(),6);}},
-  {icon:"∥",name:"연속번호 포함",desc:"인접 번호 1쌍을 반드시 포함하여 선택",fn(){for(let i=0;i<800;i++){const p=wPick(pool(),6).sort((a,b)=>a-b);if(p.some((_,j)=>j<5&&p[j+1]-p[j]===1))return p;}const b=wPick(pool(),4);const c=1+Math.floor(Math.random()*44);return[...new Set([...b,c,c+1])].slice(0,6).sort((a,b)=>a-b);}},
-  {icon:"⊞",name:"구간 분산",desc:"5개 구간 1–9, 10–19, 20–29, 30–39, 40–45 골고루",fn(){const z=[[1,9],[10,19],[20,29],[30,39],[40,45]];const res=[];for(const[lo,hi]of shuffle(z).slice(0,5))res.push(...wPick(ALL.filter(n=>n>=lo&&n<=hi).map(n=>({n,w:FREQ[n]})),1));res.push(...wPick(pool().filter(({n})=>!res.includes(n)),1));return res.sort((a,b)=>a-b).slice(0,6);}},
-  {icon:"◎",name:"가중 랜덤",desc:"빈도 가중 확률 기반 완전 랜덤 선택",fn(){return wPick(pool(),6);}},
-  {icon:"○",name:"순수 랜덤",desc:"균등 확률 — 수학적으로 가장 정직한 선택",fn(){return pickN(ALL,6);}}
+const ST=[
+  {icon:"🔥",name:"고빈도 집중",   desc:"역대 출현 빈도 상위 번호 중심으로 선택",fn(){return pN(ht().slice(0,15),6);}},
+  {icon:"❄️",name:"저빈도 집중",   desc:"오랫동안 미출현 번호 위주로 선택",fn(){return pN(cl().slice(0,15),6);}},
+  {icon:"⚖️",name:"핫+콜드 혼합", desc:"빈출 3개 + 미출현 3개 균형 조합",fn(){return[...pN(ht().slice(0,12),3),...pN(cl().slice(0,12),3)].sort((x,y)=>x-y);}},
+  {icon:"◑", name:"홀짝 3:3 균형",desc:"홀수 3개 · 짝수 3개 균형 구성",fn(){return[...wP(ALL.filter(n=>n%2).map(n=>({n,w:FREQ[n]})),3),...wP(ALL.filter(n=>!(n%2)).map(n=>({n,w:FREQ[n]})),3)].sort((x,y)=>x-y);}},
+  {icon:"↕", name:"저고 3:3 균형",desc:"1–22 구간 3개, 23–45 구간 3개",fn(){return[...wP(ALL.filter(n=>n<=22).map(n=>({n,w:FREQ[n]})),3),...wP(ALL.filter(n=>n>=23).map(n=>({n,w:FREQ[n]})),3)].sort((x,y)=>x-y);}},
+  {icon:"Σ", name:"합계 균형",     desc:"6개 합계 110–155 범위를 목표로 선택",fn(){for(let i=0;i<2000;i++){const p=wP(pl(),6);const s=p.reduce((a,b)=>a+b,0);if(s>=110&&s<=155)return p;}return wP(pl(),6);}},
+  {icon:"∥", name:"연속번호 포함", desc:"인접 번호 1쌍을 반드시 포함하여 선택",fn(){for(let i=0;i<800;i++){const p=wP(pl(),6).sort((x,y)=>x-y);if(p.some((_,j)=>j<5&&p[j+1]-p[j]===1))return p;}const b=wP(pl(),4);const c=1+(0|Math.random()*44);return[...new Set([...b,c,c+1])].slice(0,6).sort((x,y)=>x-y);}},
+  {icon:"⊞", name:"구간 분산",     desc:"5개 구간에서 각 1개씩 골고루 분산",fn(){const z=[[1,9],[10,19],[20,29],[30,39],[40,45]];const res=[];for(const[lo,hi]of sh(z).slice(0,5))res.push(...wP(ALL.filter(n=>n>=lo&&n<=hi).map(n=>({n,w:FREQ[n]})),1));res.push(...wP(pl().filter(({n})=>!res.includes(n)),1));return res.sort((x,y)=>x-y).slice(0,6);}},
+  {icon:"◎", name:"가중 랜덤",     desc:"빈도 가중 확률 기반 완전 랜덤 선택",fn(){return wP(pl(),6);}},
+  {icon:"○", name:"순수 랜덤",     desc:"균등 확률 — 수학적으로 가장 정직한 선택",fn(){return pN(ALL,6);}}
 ];
+const bc=n=>n<=10?'b-y':n<=20?'b-b':n<=30?'b-r':n<=40?'b-g':'b-n';
 
-function bc(n){return n<=10?'b-y':n<=20?'b-b':n<=30?'b-r':n<=40?'b-g':'b-n';}
-
-function getWeekInfo(){
+function weekInfo(){
   const now=new Date(),d=now.getDate(),wn=Math.ceil(d/7);
   const ms=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
   const ws=['1째주','2째주','3째주','4째주','5째주'];
   const mon=new Date(now);mon.setDate(d-now.getDay()+1);
   const sun=new Date(mon);sun.setDate(mon.getDate()+6);
   const f=dt=>`${dt.getMonth()+1}.${dt.getDate()}`;
-  return{label:`${now.getFullYear()}년 ${ms[now.getMonth()]} ${ws[wn-1]}`,range:`${f(mon)} – ${f(sun)}`};
+  return{label:`${now.getFullYear()}년 ${ms[now.getMonth()]} ${ws[wn-1]}`,range:`${f(mon)}–${f(sun)}`};
 }
 
 function generate(){
-  const info=getWeekInfo();
-  document.getElementById('nav-week').textContent=info.label;
-  document.getElementById('section-date').textContent=`${info.label} (${info.range})`;
-
-  /* 카드 렌더 */
-  car.innerHTML=STRATS.map((s,i)=>{
+  const {label,range}=weekInfo();
+  document.getElementById('nav-week').textContent=label;
+  document.getElementById('sec-title').textContent=`${label} (${range})`;
+  car.innerHTML=ST.map((s,i)=>{
     const nums=s.fn();
     const sum=nums.reduce((a,b)=>a+b,0);
     const balls=nums.map(n=>`<div class="ball ${bc(n)}">${n}</div>`).join('');
-    return`<div class="card" style="transition-delay:${i*80}ms" role="tabpanel">
-      <div class="card-num">패턴 ${String(i+1).padStart(2,'0')}</div>
-      <div class="card-name">${s.icon} ${s.name}</div>
-      <div class="card-desc">${s.desc}</div>
-      <div class="card-divider"></div>
-      <div class="balls">${balls}</div>
-      <div class="card-sum">합계 ${sum}</div>
+    const base=i*100;
+    return`<div class="card">
+      <div class="card-label ca" style="animation-delay:${base}ms">패턴 ${String(i+1).padStart(2,'0')}</div>
+      <div class="card-name  ca" style="animation-delay:${base+80}ms">${s.icon} ${s.name}</div>
+      <div class="card-desc  ca" style="animation-delay:${base+155}ms">${s.desc}</div>
+      <div class="card-divider ca" style="animation-delay:${base+215}ms"></div>
+      <div class="balls       ca" style="animation-delay:${base+270}ms">${balls}</div>
+      <div class="card-sum    ca" style="animation-delay:${base+335}ms">합계 ${sum}</div>
     </div>`;
   }).join('');
-
-  /* 점 네비게이션 */
-  document.getElementById('dot-nav').innerHTML=STRATS.map((_,i)=>
-    `<div class="dot${i===0?' active':''}" onclick="scrollToCard(${i})" role="tab" aria-label="패턴 ${i+1}"></div>`
+  document.getElementById('dots').innerHTML=ST.map((_,i)=>
+    `<button class="dot${i===0?' on':''}" onclick="goCard(${i})" aria-label="패턴${i+1}"></button>`
   ).join('');
-
   car.scrollLeft=0;
-  requestAnimationFrame(()=>observeAll());
+  updateArrows();
+  ['sec-hdr','car-wrap','bot-nav','recent-sec','footer'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.classList.remove('visible');requestAnimationFrame(()=>io.observe(el));}
+  });
 }
 
-function scrollToCard(i){
-  const cardW=car.querySelector('.card')?.offsetWidth||300;
-  car.scrollTo({left:i*(cardW+16),behavior:'smooth'});
+/* ── RECENT DRAWS ── */
+function calcDrawNo(){return Math.floor((new Date()-new Date('2002-12-07'))/(7*864e5))+1;}
+const bbc=n=>n<=10?'b-y':n<=20?'b-b':n<=30?'b-r':n<=40?'b-g':'b-n';
+async function loadRecentDraws(){
+  const grid=document.getElementById('recent-grid');
+  const latest=calcDrawNo()-1;
+  const draws=[];
+  for(let i=0;i<4;i++){
+    try{
+      const r=await fetch(`https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${latest-i}`);
+      const d=await r.json();
+      if(d.returnValue==='success')draws.push(d);
+    }catch(e){}
+  }
+  if(!draws.length){
+    grid.innerHTML=`<div class="recent-error">동행복권 서버 직접 접근 제한됨<br><a href="https://www.dhlottery.co.kr/gameResult.do?method=byWin" target="_blank">동행복권에서 확인하기 →</a></div>`;
+    return;
+  }
+  grid.innerHTML=draws.map(d=>{
+    const nums=[d.drwtNo1,d.drwtNo2,d.drwtNo3,d.drwtNo4,d.drwtNo5,d.drwtNo6];
+    return`<div class="recent-row">
+      <div class="recent-meta"><div class="recent-drw">제 ${d.drwNo}회</div><div class="recent-date">${d.drwNoDate}</div></div>
+      <div class="recent-balls">
+        ${nums.map(n=>`<div class="rball ${bbc(n)}">${n}</div>`).join('')}
+        <span class="bonus-sep">+</span>
+        <div class="rball ${bbc(d.bnusNo)}">${d.bnusNo}</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 generate();
+loadRecentDraws();
 </script>
 </body>
 </html>
