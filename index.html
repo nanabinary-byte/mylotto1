@@ -316,7 +316,7 @@
 <nav>
   <div class="nav-left">
     <a class="nav-logo" href="#">Lotto<em>.</em></a>
-    <span class="nav-version">v1.7</span>
+    <span class="nav-version">v2.0</span>
     <span class="nav-date" id="nav-date"></span>
   </div>
   <div class="toggle-wrap">
@@ -496,7 +496,7 @@ const io=new IntersectionObserver(entries=>{
 },{threshold:.05});
 
 /* ── LOTTO ── */
-const FREQ={1:72,2:68,3:75,4:71,5:74,6:70,7:78,8:65,9:73,10:76,11:69,12:74,13:71,14:68,15:77,16:72,17:75,18:73,19:70,20:76,21:68,22:74,23:79,24:71,25:73,26:77,27:85,28:69,29:74,30:71,31:76,32:73,33:78,34:87,35:70,36:75,37:72,38:77,39:73,40:68,41:74,42:71,43:82,44:70,45:73};
+let FREQ={1:72,2:68,3:75,4:71,5:74,6:70,7:78,8:65,9:73,10:76,11:69,12:74,13:71,14:68,15:77,16:72,17:75,18:73,19:70,20:76,21:68,22:74,23:79,24:71,25:73,26:77,27:85,28:69,29:74,30:71,31:76,32:73,33:78,34:87,35:70,36:75,37:72,38:77,39:73,40:68,41:74,42:71,43:82,44:70,45:73};
 const ALL=Array.from({length:45},(_,i)=>i+1);
 const sh=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];}return b;};
 const pN=(a,n)=>sh(a).slice(0,n).sort((x,y)=>x-y);
@@ -569,14 +569,57 @@ function generate(){
   if(rt){rt.classList.remove('visible');requestAnimationFrame(()=>io.observe(rt));}
 }
 
-/* ── RECENT DRAWS — allorigins CORS 프록시 사용 ── */
+/* ── LOTTO DATA — 실제 데이터 로드 (GitHub Actions 수집) ── */
 function calcDrawNo(){return Math.floor((new Date()-new Date('2002-12-07'))/(7*864e5))+1;}
 const bbc=n=>n<=10?'b-y':n<=20?'b-b':n<=30?'b-r':n<=40?'b-g':'b-n';
 
-/* ── RECENT DRAWS — 외부 프록시 CORS 차단으로 링크 제공 ── */
-function calcDrawNo(){return Math.floor((new Date()-new Date('2002-12-07'))/(7*864e5))+1;}
+async function loadLottoData(){
+  try{
+    const r=await fetch('./data/lotto.json?t='+Date.now());
+    const d=await r.json();
+    const hasData=d.latestDrwNo>0;
+    if(hasData){
+      /* 실제 빈도로 FREQ 덮어쓰기 */
+      Object.keys(d.freq).forEach(k=>{FREQ[+k]=d.freq[k];});
+      console.log(`✅ 실제 데이터 — 최신 회차: ${d.latestDrwNo} (${d.updated})`);
+    }
+    renderRecentDraws(d.recent||[], d.updated, d.latestDrwNo, hasData);
+  }catch(e){
+    console.log('기본 빈도 데이터 사용');
+    renderRecentLink();
+  }
+}
 
-function loadRecentDraws(){
+function renderRecentDraws(recent, updated, latestNo, hasData){
+  if(!hasData||!recent.length){renderRecentLink();return;}
+  const grid=document.getElementById('recent-grid');
+  grid.innerHTML=[...recent].reverse().map(d=>{
+    const balls=d.nums.map(n=>`<div class="rball ${bbc(n)}">${n}</div>`).join('');
+    return`<div class="recent-row" style="opacity:0;transform:translateY(16px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1)">
+      <div class="recent-meta">
+        <div class="recent-drw">제 ${d.drwNo}회</div>
+        <div class="recent-date">${d.drwNoDate}</div>
+      </div>
+      <div class="recent-balls">
+        ${balls}
+        <span class="bonus-sep">+</span>
+        <div class="rball ${bbc(d.bonus)}">${d.bonus}</div>
+      </div>
+    </div>`;
+  }).join('');
+  /* 업데이트 날짜 뱃지 */
+  if(updated){
+    const t=document.querySelector('.recent-title');
+    if(t) t.insertAdjacentHTML('beforeend',
+      `<span style="font-size:12px;font-weight:400;color:var(--text-tertiary);margin-left:10px">${updated} 기준 · 제${latestNo}회</span>`);
+  }
+  /* 각 row 개별 fade-in */
+  document.querySelectorAll('.recent-row').forEach((el,i)=>{
+    setTimeout(()=>{el.style.opacity='1';el.style.transform='translateY(0)';},i*120);
+  });
+}
+
+function renderRecentLink(){
   const latest=calcDrawNo()-1;
   document.getElementById('recent-grid').innerHTML=`
     <div class="recent-link-card">
@@ -584,19 +627,16 @@ function loadRecentDraws(){
         <div class="recent-link-title">최근 당첨번호 확인</div>
         <div class="recent-link-desc">예상 최신 회차 · 제 ${latest}회</div>
       </div>
-      <a class="recent-link-btn"
-         href="https://www.dhlottery.co.kr/gameResult.do?method=byWin"
-         target="_blank" rel="noopener">
+      <a class="recent-link-btn" href="https://www.dhlottery.co.kr/gameResult.do?method=byWin" target="_blank" rel="noopener">
         동행복권 바로가기 →
       </a>
     </div>`;
-  /* 카드도 별도 observer 등록 */
   const card=document.querySelector('.recent-link-card');
-  if(card) io.observe(card);
+  if(card)io.observe(card);
 }
 
 generate();
-loadRecentDraws();
+loadLottoData();
 </script>
 </body>
 </html>
