@@ -89,7 +89,7 @@
   .hero {
     background: var(--bg);
     max-width: 1080px;
-    margin: 0 auto;
+    margin: 0;
     padding: 40px 16px 24px;
     transition: background .35s;
   }
@@ -142,7 +142,7 @@
   .legend-bar {
     background: var(--bg);
     max-width: 1080px;
-    margin: 0 auto;
+    margin: 0;
     display: flex; align-items: center;
     gap: 14px; flex-wrap: wrap; padding: 0 16px 20px;
     transition: background .35s;
@@ -238,7 +238,7 @@
   /* ── BOTTOM NAV (목업 우측 하단 화살표) ── */
   .bottom-nav {
     max-width: 1080px;
-    margin: 0 auto;
+    margin: 0;
     display: flex; align-items: center; justify-content: flex-end;
     gap: 8px; padding: 12px 16px 36px;
     opacity: 0; transform: translateY(10px);
@@ -262,7 +262,7 @@
   /* ── RECENT DRAWS ── */
   .recent-section {
     max-width: 1080px;
-    margin: 0 auto;
+    margin: 0;
     padding: 0 16px 48px;
     opacity: 0; transform: translateY(16px);
     transition: opacity .9s cubic-bezier(.22,1,.36,1) .1s, transform .9s cubic-bezier(.22,1,.36,1) .1s;
@@ -341,7 +341,18 @@
   .footer-source { font-size: 11px; color: #aeaeb2; margin-top: 12px; }
 
 
-  @media (max-width: 480px) {
+  /* ── 데이터 오래됨 경고 ── */
+  .data-warn {
+    display: none; align-items: center; gap: 7px;
+    background: #fff3cd; border: 1px solid #ffc107;
+    border-radius: 8px; padding: 8px 14px;
+    margin: 0 0 12px 0;
+    font-size: 12px; color: #856404; font-weight: 500;
+  }
+  [data-theme="dark"] .data-warn { background: #2a2200; border-color: #b38600; color: #ffd060; }
+  .data-warn.show { display: flex; }
+
+
     :root { --ball-size: 58px; }
     .card { flex: 0 0 calc(100% - 68px); min-height: 400px; }
     .week-title { font-size: 26px; }
@@ -358,7 +369,7 @@
   <div class="nav-inner">
     <div class="nav-left">
       <a class="nav-logo" href="#">Lotto<em>.</em></a>
-      <span class="nav-version">v3.0</span>
+      <span class="nav-version">v3.1</span>
       <span class="nav-date" id="nav-date"></span>
     </div>
     <div class="toggle-wrap">
@@ -376,11 +387,9 @@
 <!-- HERO — 목업 레이아웃 -->
 <div class="hero">
   <div class="hero-top">
-    <!-- 좌: 큰 주차 타이틀 -->
     <div>
       <div class="week-title" id="week-title">로딩 중</div>
     </div>
-    <!-- 우: 번호 다시 생성 버튼 -->
     <button class="regen-btn" id="gen-btn" onclick="onGenerate(event)">
       <span class="btn-icon" aria-hidden="true">
         <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -395,6 +404,12 @@
   <div class="week-sub" id="week-sub" onclick="document.getElementById('car').scrollTo({left:0,behavior:'smooth'})">
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M6 4v2.5L7.5 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
     이번주 예상번호
+  </div>
+
+  <!-- 데이터 오래됨 경고 -->
+  <div class="data-warn" id="data-warn">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2L14.5 14H1.5L8 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 7v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="12" r=".75" fill="currentColor"/></svg>
+    <span id="data-warn-text">당첨번호 데이터가 최신이 아닐 수 있습니다. 빈도 통계에 영향을 줄 수 있습니다.</span>
   </div>
 </div>
 
@@ -660,9 +675,25 @@ async function loadLottoData(){
     draws.forEach(d=>{(d.numbers||[]).forEach(n=>{newFreq[n]=(newFreq[n]||0)+1;});});
     FREQ=newFreq;
 
-    /* 최근 5회 */
+    /* 최신 회차 */
     const sorted=[...draws].sort((a,b)=>b.draw_no-a.draw_no);
     const latestNo=sorted[0].draw_no;
+
+    /* ── 데이터 최신 여부 감지 ── */
+    const expectedNo=calcDrawNo()-1;
+    const gap=expectedNo-latestNo;
+    if(gap>=2){
+      const warn=document.getElementById('data-warn');
+      const txt=document.getElementById('data-warn-text');
+      if(warn&&txt){
+        txt.textContent=`데이터가 ${gap}회차 뒤처져 있습니다 (최신: 제${latestNo}회 / 예상: 제${expectedNo}회). 빈도 통계에 영향을 줄 수 있습니다.`;
+        warn.classList.add('show');
+      }
+    }
+
+    console.log(`✅ 실제 데이터 로드 — 총 ${draws.length}회차, 최신 ${latestNo}회, 격차 ${gap}회`);
+
+    /* 최근 5회 */
     const recent=sorted.slice(0,5).map(d=>({
       drwNo:d.draw_no,
       drwNoDate:(d.date||'').split('T')[0],
@@ -670,11 +701,9 @@ async function loadLottoData(){
       bonus:d.bonus_no
     }));
 
-    console.log(`✅ 실제 데이터 로드 완료 — 총 ${draws.length}회차, 최신 ${latestNo}회`);
-
-    /* 실제 빈도로 카드 다시 생성 + 최근번호 렌더 */
+    /* 실제 빈도로 카드 재생성 + 최근번호 렌더 */
     generate();
-    renderRecentDraws(recent, sorted[0].drwNoDate || (sorted[0].date||'').split('T')[0], latestNo, true);
+    renderRecentDraws(recent, (sorted[0].date||'').split('T')[0], latestNo, true);
   }catch(e){
     console.log('기본 빈도 데이터 사용:', e.message);
     renderRecentLink();
