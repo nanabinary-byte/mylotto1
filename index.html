@@ -159,7 +159,10 @@
   .carousel-wrap.visible { opacity: 1; transform: translateY(0); }
 
   .carousel {
-    display: flex; gap: 16px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 320px;
+    gap: 16px;
     overflow-x: scroll;
     scroll-snap-type: x mandatory;
     scroll-snap-stop: always;
@@ -174,11 +177,8 @@
 
   /* ── CARD ── */
   .card {
-    /* flex-basis 대신 width를 명시해서 브라우저 호환성 확보 */
-    flex: none;
-    width: 320px;
-    max-width: 320px;
-    min-width: 0;              /* flex min-width:auto 차단 — 콘텐츠가 카드 밖으로 못 밀게 */
+    width: 100%;
+    min-width: 0;
     min-height: 440px;
     scroll-snap-align: start;
     background: var(--card);
@@ -187,7 +187,7 @@
     display: flex; flex-direction: column;
     box-shadow: 0 2px 12px rgba(0,0,0,0.07);
     transition: background .35s, transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s;
-    overflow: hidden;          /* 내부 콘텐츠가 카드 바깥으로 나가지 않도록 */
+    overflow: hidden;
   }
   [data-theme="dark"] .card { box-shadow: 0 2px 12px rgba(0,0,0,0.4); }
   .card:hover { transform: scale(1.02); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
@@ -359,7 +359,8 @@
 
 
     :root { --ball-size: 58px; }
-    .card { flex: none; width: calc(100% - 32px); max-width: calc(100% - 32px); min-height: 400px; }
+    .carousel { grid-auto-columns: calc(100vw - 48px); }
+    .card { min-height: 400px; }
     .week-title { font-size: 26px; }
     .toggle-label { display: none; }
     .nav-inner, .hero, .legend-bar, .bottom-nav, .recent-section { padding-left: 16px; padding-right: 16px; }
@@ -374,7 +375,7 @@
   <div class="nav-inner">
     <div class="nav-left">
       <a class="nav-logo" href="#">Lotto<em>.</em></a>
-      <span class="nav-version">v3.3</span>
+      <span class="nav-version">v3.4</span>
       <span class="nav-date" id="nav-date"></span>
     </div>
     <div class="toggle-wrap">
