@@ -316,7 +316,7 @@
 <nav>
   <div class="nav-left">
     <a class="nav-logo" href="#">Lotto<em>.</em></a>
-    <span class="nav-version">v2.0</span>
+    <span class="nav-version">v2.1</span>
     <span class="nav-date" id="nav-date"></span>
   </div>
   <div class="toggle-wrap">
@@ -569,31 +569,48 @@ function generate(){
   if(rt){rt.classList.remove('visible');requestAnimationFrame(()=>io.observe(rt));}
 }
 
-/* ── LOTTO DATA — 실제 데이터 로드 (GitHub Actions 수집) ── */
+/* ── LOTTO DATA — smok95.github.io에서 실시간 직접 로드 (CORS 허용) ── */
 function calcDrawNo(){return Math.floor((new Date()-new Date('2002-12-07'))/(7*864e5))+1;}
 const bbc=n=>n<=10?'b-y':n<=20?'b-b':n<=30?'b-r':n<=40?'b-g':'b-n';
 
 async function loadLottoData(){
   try{
-    const r=await fetch('./data/lotto.json?t='+Date.now());
-    const d=await r.json();
-    const hasData=d.latestDrwNo>0;
-    if(hasData){
-      /* 실제 빈도로 FREQ 덮어쓰기 */
-      Object.keys(d.freq).forEach(k=>{FREQ[+k]=d.freq[k];});
-      console.log(`✅ 실제 데이터 — 최신 회차: ${d.latestDrwNo} (${d.updated})`);
-    }
-    renderRecentDraws(d.recent||[], d.updated, d.latestDrwNo, hasData);
+    const r=await fetch('https://smok95.github.io/lotto/results/all.json');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const draws=await r.json();
+    if(!Array.isArray(draws)||!draws.length)throw new Error('빈 데이터');
+
+    /* 실제 빈도 계산 */
+    const newFreq={};
+    for(let i=1;i<=45;i++)newFreq[i]=0;
+    draws.forEach(d=>{(d.numbers||[]).forEach(n=>{newFreq[n]=(newFreq[n]||0)+1;});});
+    FREQ=newFreq;
+
+    /* 최근 5회 */
+    const sorted=[...draws].sort((a,b)=>b.draw_no-a.draw_no);
+    const latestNo=sorted[0].draw_no;
+    const recent=sorted.slice(0,5).map(d=>({
+      drwNo:d.draw_no,
+      drwNoDate:(d.date||'').split('T')[0],
+      nums:d.numbers,
+      bonus:d.bonus_no
+    }));
+
+    console.log(`✅ 실제 데이터 로드 완료 — 총 ${draws.length}회차, 최신 ${latestNo}회`);
+
+    /* 실제 빈도로 카드 다시 생성 + 최근번호 렌더 */
+    generate();
+    renderRecentDraws(recent, sorted[0].drwNoDate || (sorted[0].date||'').split('T')[0], latestNo, true);
   }catch(e){
-    console.log('기본 빈도 데이터 사용');
+    console.log('기본 빈도 데이터 사용:', e.message);
     renderRecentLink();
   }
 }
 
 function renderRecentDraws(recent, updated, latestNo, hasData){
-  if(!hasData||!recent.length){renderRecentLink();return;}
+  if(!hasData||!recent||!recent.length){renderRecentLink();return;}
   const grid=document.getElementById('recent-grid');
-  grid.innerHTML=[...recent].reverse().map(d=>{
+  grid.innerHTML=recent.map(d=>{
     const balls=d.nums.map(n=>`<div class="rball ${bbc(n)}">${n}</div>`).join('');
     return`<div class="recent-row" style="opacity:0;transform:translateY(16px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1)">
       <div class="recent-meta">
@@ -607,13 +624,9 @@ function renderRecentDraws(recent, updated, latestNo, hasData){
       </div>
     </div>`;
   }).join('');
-  /* 업데이트 날짜 뱃지 */
-  if(updated){
-    const t=document.querySelector('.recent-title');
-    if(t) t.insertAdjacentHTML('beforeend',
-      `<span style="font-size:12px;font-weight:400;color:var(--text-tertiary);margin-left:10px">${updated} 기준 · 제${latestNo}회</span>`);
-  }
-  /* 각 row 개별 fade-in */
+  const t=document.querySelector('.recent-title');
+  if(t&&latestNo) t.insertAdjacentHTML('beforeend',
+    `<span style="font-size:12px;font-weight:400;color:var(--text-tertiary);margin-left:10px">최신 제${latestNo}회 기준</span>`);
   document.querySelectorAll('.recent-row').forEach((el,i)=>{
     setTimeout(()=>{el.style.opacity='1';el.style.transform='translateY(0)';},i*120);
   });
