@@ -297,6 +297,101 @@
   }
   .recent-link-btn:hover { background: #0077ed; transform: scale(1.03); }
 
+
+  /* ── DASHBOARD ── */
+  .dash-section {
+    padding: 0 22px 56px;
+    opacity: 0; transform: translateY(16px);
+    transition: opacity .9s cubic-bezier(.22,1,.36,1) .1s, transform .9s cubic-bezier(.22,1,.36,1) .1s;
+  }
+  .dash-section.visible { opacity: 1; transform: translateY(0); }
+  .dash-title {
+    font-size: clamp(28px,7vw,42px); font-weight: 800;
+    letter-spacing: -.035em; line-height: 1.1;
+    color: var(--text-primary); margin-bottom: 6px;
+    transition: color .35s;
+  }
+  .dash-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 28px; transition: color .35s; }
+  .dash-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 22px; }
+  .dash-tab {
+    font-size: 13px; font-weight: 500;
+    padding: 7px 16px; border-radius: 980px; border: none;
+    background: var(--arrow-bg); color: var(--text-secondary);
+    cursor: pointer; font-family: inherit;
+    transition: background .2s, color .2s;
+  }
+  .dash-tab:hover { background: var(--arrow-hover); }
+  .dash-tab.on { background: var(--accent); color: #fff; }
+  .dash-panel { display: none; opacity: 0; }
+  .dash-panel.on { display: block; animation: dashFadeIn .6s cubic-bezier(.22,1,.36,1) both; }
+  @keyframes dashFadeIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+
+  /* 히트맵 셀 cascade */
+  .hm-cell { opacity: 0; animation: none; }
+  .hm-cell.hm-in { animation: cascade 1.4s cubic-bezier(.22,1,.36,1) both; }
+
+  /* 구간 바 행 */
+  .zone-row { opacity: 0; transform: translateY(12px); transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
+  .zone-row.zr-in { opacity: 1; transform: translateY(0); }
+
+  /* 매트릭스 행 */
+  .mt-row { opacity: 0; transform: translateX(-8px); transition: opacity .5s cubic-bezier(.22,1,.36,1), transform .5s cubic-bezier(.22,1,.36,1); }
+  .mt-row.mt-in { opacity: 1; transform: translateX(0); }
+
+  /* 백테스트 행 */
+  .bt-row { opacity: 0; transform: translateY(10px); transition: opacity .6s cubic-bezier(.22,1,.36,1), transform .6s cubic-bezier(.22,1,.36,1); }
+  .bt-row.bt-in { opacity: 1; transform: translateY(0); }
+
+  /* chart-wrap 자체 페이드 */
+  .chart-wrap { opacity: 0; transform: translateY(10px); transition: opacity .7s cubic-bezier(.22,1,.36,1) .1s, transform .7s cubic-bezier(.22,1,.36,1) .1s, background .35s, border-color .35s; }
+  .chart-wrap.cw-in { opacity: 1; transform: translateY(0); }
+
+  /* 대시보드 타이틀·서브·탭 */
+  .dash-title { opacity:0; transform:translateY(18px); transition: opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1), color .35s; }
+  .dash-title.dt-in { opacity:1; transform:translateY(0); }
+  .dash-sub { opacity:0; transform:translateY(14px); transition: opacity .9s cubic-bezier(.22,1,.36,1) .12s, transform .9s cubic-bezier(.22,1,.36,1) .12s, color .35s; }
+  .dash-sub.ds-in { opacity:1; transform:translateY(0); }
+  .dash-tabs { opacity:0; transform:translateY(10px); transition: opacity .8s cubic-bezier(.22,1,.36,1) .22s, transform .8s cubic-bezier(.22,1,.36,1) .22s; }
+  .dash-tabs.dts-in { opacity:1; transform:translateY(0); }
+  .chart-wrap {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 22px; overflow: hidden;
+    transition: background .35s, border-color .35s;
+  }
+  .chart-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 14px; letter-spacing: .04em; text-transform: uppercase; transition: color .35s; }
+  .heatmap-grid { display: grid; grid-template-columns: repeat(9,1fr); gap: 5px; }
+  .hm-cell { aspect-ratio:1; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:default; transition:transform .15s; position:relative; }
+  .hm-cell:hover { transform:scale(1.15); z-index:2; }
+  .hm-num { font-size:11px; font-weight:700; line-height:1; }
+  .hm-cnt { font-size:9px; font-weight:400; opacity:.75; margin-top:2px; }
+  .zone-bars { display:flex; flex-direction:column; gap:12px; }
+  .zone-row { display:flex; align-items:center; gap:10px; }
+  .zone-label { font-size:12px; font-weight:600; color:var(--text-secondary); width:54px; flex-shrink:0; transition:color .35s; }
+  .zone-bar-bg { flex:1; height:22px; background:var(--arrow-bg); border-radius:6px; overflow:hidden; transition:background .35s; }
+  .zone-bar-fill { height:100%; border-radius:6px; transition:width 1.2s cubic-bezier(.22,1,.36,1); display:flex; align-items:center; padding-left:8px; }
+  .zone-pct { font-size:11px; font-weight:700; color:#fff; }
+  .zone-cnt { font-size:11px; color:var(--text-tertiary); width:52px; text-align:right; flex-shrink:0; transition:color .35s; }
+  .matrix-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .matrix-scroll::-webkit-scrollbar { height:4px; }
+  .matrix-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+  .matrix-table { border-collapse:collapse; font-size:9px; }
+  .matrix-table th, .matrix-table td { width:20px; height:20px; text-align:center; vertical-align:middle; border:none; padding:0; }
+  .matrix-table th { font-weight:600; color:var(--text-tertiary); font-size:8px; }
+  .mt-cell { border-radius:3px; }
+  .bt-info { font-size:12px; color:var(--text-tertiary); margin-bottom:14px; line-height:1.6; transition:color .35s; }
+  .bt-bars { display:flex; flex-direction:column; gap:10px; }
+  .bt-row { display:flex; align-items:center; gap:10px; }
+  .bt-name { font-size:12px; font-weight:500; color:var(--text-secondary); width:100px; flex-shrink:0; transition:color .35s; }
+  .bt-bar-bg { flex:1; height:20px; background:var(--arrow-bg); border-radius:5px; overflow:hidden; transition:background .35s; }
+  .bt-bar-fill { height:100%; border-radius:5px; transition:width 1.2s cubic-bezier(.22,1,.36,1); display:flex; align-items:center; padding-left:8px; }
+  .bt-pct { font-size:10px; font-weight:700; color:#fff; }
+  .bt-val { font-size:11px; color:var(--text-tertiary); width:80px; text-align:right; flex-shrink:0; transition:color .35s; }
+  .bt-note { margin-top:14px; font-size:11px; color:var(--text-tertiary); line-height:1.65; padding:12px 14px; background:var(--arrow-bg); border-radius:10px; transition:background .35s, color .35s; }
+  @media (max-width:480px) {
+    .heatmap-grid { grid-template-columns:repeat(7,1fr); gap:4px; }
+    .bt-name { width:80px; font-size:11px; }
+  }
+
   /* ── FOOTER ── */
   footer { background: #1d1d1f; color: #6e6e73; text-align: center; padding: 28px 24px; font-size: 12px; line-height: 1.75; opacity: 0; transform: translateY(16px); transition: opacity .8s cubic-bezier(.22,1,.36,1), transform .8s cubic-bezier(.22,1,.36,1); }
   footer.visible { opacity: 1; transform: translateY(0); }
@@ -384,6 +479,56 @@
 <div class="recent-section" id="recent-sec">
   <div class="recent-title">최근 한 달 당첨번호</div>
   <div class="recent-grid" id="recent-grid"><div class="recent-loading">불러오는 중...</div></div>
+</div>
+
+
+<!-- DASHBOARD -->
+<div class="dash-section" id="dash-sec">
+  <div class="dash-title">통계 대시보드</div>
+  <div class="dash-sub">역대 당첨번호 데이터 기반 — 예측 아님, 탐색용</div>
+  <div class="dash-tabs">
+    <button class="dash-tab on" onclick="showTab('heatmap',this)">번호 히트맵</button>
+    <button class="dash-tab" onclick="showTab('zone',this)">구간 분포</button>
+    <button class="dash-tab" onclick="showTab('matrix',this)">동반출현 매트릭스</button>
+    <button class="dash-tab" onclick="showTab('backtest',this)">백테스트</button>
+  </div>
+
+  <!-- 패널 1: 히트맵 -->
+  <div class="dash-panel on" id="panel-heatmap">
+    <div class="chart-wrap">
+      <div class="chart-label">번호별 출현 빈도 히트맵 (1~45)</div>
+      <div class="heatmap-grid" id="hm-grid"></div>
+    </div>
+  </div>
+
+  <!-- 패널 2: 구간 분포 -->
+  <div class="dash-panel" id="panel-zone">
+    <div class="chart-wrap">
+      <div class="chart-label">구간별 출현 비율</div>
+      <div class="zone-bars" id="zone-bars"></div>
+    </div>
+  </div>
+
+  <!-- 패널 3: 동반출현 매트릭스 -->
+  <div class="dash-panel" id="panel-matrix">
+    <div class="chart-wrap">
+      <div class="chart-label">번호 간 동반출현 빈도 (상위 20번호 · 색이 진할수록 높음)</div>
+      <div class="matrix-scroll"><table class="matrix-table" id="mt-table"></table></div>
+    </div>
+  </div>
+
+  <!-- 패널 4: 백테스트 -->
+  <div class="dash-panel" id="panel-backtest">
+    <div class="chart-wrap">
+      <div class="chart-label">전략별 백테스트 — 최근 100회차 3등 이상 적중 시뮬레이션</div>
+      <div class="bt-info" id="bt-info"></div>
+      <div class="bt-bars" id="bt-bars"></div>
+      <div class="bt-note">
+        ※ 각 회차마다 해당 전략으로 번호 1세트 생성 후 실제 당첨번호와 비교 (3개 이상 일치 = 3등 이상)<br>
+        ※ 로또는 독립시행 — 전략 간 유의미한 차이는 없으며, 결과는 매번 달라집니다.
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- FOOTER -->
@@ -498,25 +643,113 @@ const io=new IntersectionObserver(entries=>{
 /* ── LOTTO ── */
 let FREQ={1:72,2:68,3:75,4:71,5:74,6:70,7:78,8:65,9:73,10:76,11:69,12:74,13:71,14:68,15:77,16:72,17:75,18:73,19:70,20:76,21:68,22:74,23:79,24:71,25:73,26:77,27:85,28:69,29:74,30:71,31:76,32:73,33:78,34:87,35:70,36:75,37:72,38:77,39:73,40:68,41:74,42:71,43:82,44:70,45:73};
 const ALL=Array.from({length:45},(_,i)=>i+1);
-const sh=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];}return b;};
-const pN=(a,n)=>sh(a).slice(0,n).sort((x,y)=>x-y);
-function wP(p,n){const r=[...p],res=[];for(let i=0;i<n&&r.length;i++){const tw=r.reduce((s,{w})=>s+w,0);let rv=Math.random()*tw,idx=0;for(;idx<r.length-1;idx++){rv-=r[idx].w;if(rv<=0)break;}res.push(r[idx].n);r.splice(idx,1);}return res.sort((x,y)=>x-y);}
-const pl=()=>Object.entries(FREQ).map(([n,w])=>({n:+n,w}));
-const ht=()=>Object.entries(FREQ).sort((a,b)=>b[1]-a[1]).map(([n])=>+n);
-const cl=()=>Object.entries(FREQ).sort((a,b)=>a[1]-b[1]).map(([n])=>+n);
 
-/* 이모지 제거 — 목업 그대로 */
+/* 피셔-예이츠 셔플 — 원본 불변 */
+const sh=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];}return b;};
+
+/* 균등 랜덤: 배열에서 n개 무작위 추출 후 정렬 */
+const pN=(a,n)=>sh(a).slice(0,n).sort((x,y)=>x-y);
+
+/* 가중 랜덤: {n, w} 풀에서 비복원 추출 → 정렬 반환 */
+function wP(pool,n){
+  const r=[...pool],res=[];
+  for(let i=0;i<n&&r.length;i++){
+    const tw=r.reduce((s,{w})=>s+w,0);
+    let rv=Math.random()*tw,idx=r.length-1;
+    for(let k=0;k<r.length-1;k++){rv-=r[k].w;if(rv<=0){idx=k;break;}}
+    res.push(r[idx].n);
+    r.splice(idx,1);
+  }
+  return res.sort((x,y)=>x-y);
+}
+
+/* 풀 헬퍼 */
+const pl =()=>ALL.map(n=>({n,w:FREQ[n]||1}));                          // 전체 가중 풀
+const ht =()=>ALL.slice().sort((a,b)=>(FREQ[b]||0)-(FREQ[a]||0));     // 고빈도 순
+const cl =()=>ALL.slice().sort((a,b)=>(FREQ[a]||0)-(FREQ[b]||0));     // 저빈도 순
+const sub=(lo,hi)=>ALL.filter(n=>n>=lo&&n<=hi).map(n=>({n,w:FREQ[n]||1}));
+
 const ST=[
-  {name:"고빈도 집중",   desc:"역대 출현 빈도 상위 번호 중심으로 선택",fn(){return pN(ht().slice(0,15),6);}},
-  {name:"저빈도 집중",   desc:"오랫동안 미출현 번호 위주로 선택",fn(){return pN(cl().slice(0,15),6);}},
-  {name:"핫+콜드 혼합", desc:"빈출 3개 + 미출현 3개 균형 조합",fn(){return[...pN(ht().slice(0,12),3),...pN(cl().slice(0,12),3)].sort((x,y)=>x-y);}},
-  {name:"홀짝 3:3 균형",desc:"홀수 3개 · 짝수 3개 균형 구성",fn(){return[...wP(ALL.filter(n=>n%2).map(n=>({n,w:FREQ[n]})),3),...wP(ALL.filter(n=>!(n%2)).map(n=>({n,w:FREQ[n]})),3)].sort((x,y)=>x-y);}},
-  {name:"저고 3:3 균형",desc:"1–22 구간 3개, 23–45 구간 3개",fn(){return[...wP(ALL.filter(n=>n<=22).map(n=>({n,w:FREQ[n]})),3),...wP(ALL.filter(n=>n>=23).map(n=>({n,w:FREQ[n]})),3)].sort((x,y)=>x-y);}},
-  {name:"합계 균형",     desc:"6개 합계 110–155 범위를 목표로 선택",fn(){for(let i=0;i<2000;i++){const p=wP(pl(),6);const s=p.reduce((a,b)=>a+b,0);if(s>=110&&s<=155)return p;}return wP(pl(),6);}},
-  {name:"연속번호 포함", desc:"인접 번호 1쌍을 반드시 포함하여 선택",fn(){for(let i=0;i<800;i++){const p=wP(pl(),6).sort((x,y)=>x-y);if(p.some((_,j)=>j<5&&p[j+1]-p[j]===1))return p;}const b=wP(pl(),4);const c=1+(0|Math.random()*44);return[...new Set([...b,c,c+1])].slice(0,6).sort((x,y)=>x-y);}},
-  {name:"구간 분산",     desc:"5개 구간에서 각 1개씩 골고루 분산",fn(){const z=[[1,9],[10,19],[20,29],[30,39],[40,45]];const res=[];for(const[lo,hi]of sh(z).slice(0,5))res.push(...wP(ALL.filter(n=>n>=lo&&n<=hi).map(n=>({n,w:FREQ[n]})),1));res.push(...wP(pl().filter(({n})=>!res.includes(n)),1));return res.sort((x,y)=>x-y).slice(0,6);}},
-  {name:"가중 랜덤",     desc:"빈도 가중 확률 기반 완전 랜덤 선택",fn(){return wP(pl(),6);}},
-  {name:"순수 랜덤",     desc:"균등 확률 — 수학적으로 가장 정직한 선택",fn(){return pN(ALL,6);}}
+  /* 01 고빈도 집중: 상위 15개 풀에서 빈도 가중 추출 */
+  {name:"고빈도 집중",
+   desc:"역대 출현 빈도 상위 번호 중심으로 선택",
+   fn(){return wP(ht().slice(0,15).map(n=>({n,w:FREQ[n]||1})),6);}},
+
+  /* 02 저빈도 집중: 하위 15개 풀에서 균등 추출 (빈도 낮은 번호는 w값도 낮아 가중이 역효과) */
+  {name:"저빈도 집중",
+   desc:"오랫동안 미출현 번호 위주로 선택",
+   fn(){return pN(cl().slice(0,15),6);}},
+
+  /* 03 핫+콜드 혼합: 상위12 중 3개(가중) + 하위12 중 3개(균등) */
+  {name:"핫+콜드 혼합",
+   desc:"빈출 3개 + 미출현 3개 균형 조합",
+   fn(){
+     const hot=wP(ht().slice(0,12).map(n=>({n,w:FREQ[n]||1})),3);
+     const cold=pN(cl().slice(0,12).filter(n=>!hot.includes(n)),3);
+     return [...hot,...cold].sort((x,y)=>x-y);
+   }},
+
+  /* 04 홀짝 3:3 균형: 홀수 풀·짝수 풀 각 가중 추출 */
+  {name:"홀짝 3:3 균형",
+   desc:"홀수 3개 · 짝수 3개 균형 구성",
+   fn(){
+     const odd =ALL.filter(n=>n%2).map(n=>({n,w:FREQ[n]||1}));
+     const even=ALL.filter(n=>!(n%2)).map(n=>({n,w:FREQ[n]||1}));
+     return[...wP(odd,3),...wP(even,3)].sort((x,y)=>x-y);
+   }},
+
+  /* 05 저고 3:3 균형: 1~22 / 23~45 각 가중 추출 */
+  {name:"저고 3:3 균형",
+   desc:"1–22 구간 3개, 23–45 구간 3개",
+   fn(){return[...wP(sub(1,22),3),...wP(sub(23,45),3)].sort((x,y)=>x-y);}},
+
+  /* 06 합계 균형: 합계 110~155 조건 충족 시 반환, 최대 2000회 시도 */
+  {name:"합계 균형",
+   desc:"6개 합계 110–155 범위를 목표로 선택",
+   fn(){
+     for(let i=0;i<2000;i++){
+       const p=wP(pl(),6);
+       if(p.reduce((a,b)=>a+b,0)>=110&&p.reduce((a,b)=>a+b,0)<=155)return p;
+     }
+     return wP(pl(),6); // fallback
+   }},
+
+  /* 07 연속번호 포함: 인접 쌍 포함 조건 — 강제삽입 시 경계(44,45) 처리 */
+  {name:"연속번호 포함",
+   desc:"인접 번호 1쌍을 반드시 포함하여 선택",
+   fn(){
+     for(let i=0;i<800;i++){
+       const p=wP(pl(),6).sort((x,y)=>x-y);
+       if(p.some((_,j)=>j<5&&p[j+1]-p[j]===1))return p;
+     }
+     // 강제 삽입 fallback
+     const base=wP(pl(),4);
+     const c=1+Math.floor(Math.random()*44); // 1~44 → c+1은 최대 45
+     const merged=[...new Set([...base,c,c+1])].sort((x,y)=>x-y).slice(0,6);
+     return merged;
+   }},
+
+  /* 08 구간 분산: 5구간 각 1개 가중 추출 + 잔여 1개 보충 */
+  {name:"구간 분산",
+   desc:"5개 구간에서 각 1개씩 골고루 분산",
+   fn(){
+     const zones=[[1,9],[10,19],[20,29],[30,39],[40,45]];
+     const res=[];
+     for(const[lo,hi]of zones)res.push(...wP(sub(lo,hi),1));
+     // 6번째: 아직 선택 안 된 번호 중 가중 추출
+     const extra=wP(pl().filter(({n})=>!res.includes(n)),1);
+     return[...res,...extra].sort((x,y)=>x-y);
+   }},
+
+  /* 09 가중 랜덤: 빈도 가중 완전 랜덤 */
+  {name:"가중 랜덤",
+   desc:"빈도 가중 확률 기반 완전 랜덤 선택",
+   fn(){return wP(pl(),6);}},
+
+  /* 10 순수 랜덤: 균등 확률 */
+  {name:"순수 랜덤",
+   desc:"균등 확률 — 수학적으로 가장 정직한 선택",
+   fn(){return pN(ALL,6);}}
 ];
 const bc=n=>n<=10?'b-y':n<=20?'b-b':n<=30?'b-r':n<=40?'b-g':'b-n';
 
@@ -560,13 +793,261 @@ function generate(){
   ).join('');
   car.scrollLeft=0;
   updateArrows();
-  ['car-wrap','bot-nav','recent-sec','footer'].forEach(id=>{
+  ['car-wrap','bot-nav','recent-sec','dash-sec','footer'].forEach(id=>{
     const el=document.getElementById(id);
     if(el){el.classList.remove('visible');requestAnimationFrame(()=>io.observe(el));}
   });
   /* recent-title 별도 등록 */
   const rt=document.querySelector('.recent-title');
   if(rt){rt.classList.remove('visible');requestAnimationFrame(()=>io.observe(rt));}
+}
+
+
+/* ── DASHBOARD ── */
+let ALL_DRAWS=[];  // 전체 회차 데이터 캐시
+
+function showTab(id,btn){
+  document.querySelectorAll('.dash-panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.dash-tab').forEach(b=>b.classList.remove('on'));
+  const panel=document.getElementById('panel-'+id);
+  panel.classList.add('on');
+  btn.classList.add('on');
+
+  // chart-wrap re-animate on every tab switch
+  requestAnimationFrame(()=>{
+    panel.querySelectorAll('.chart-wrap').forEach(cw=>{
+      cw.classList.remove('cw-in');
+      void cw.offsetWidth; // reflow
+      cw.classList.add('cw-in');
+    });
+    // 내부 요소 re-animate
+    panel.querySelectorAll('.hm-cell').forEach((el,i)=>{
+      el.classList.remove('hm-in');
+      void el.offsetWidth;
+      el.style.animationDelay=`${i*28}ms`;
+      setTimeout(()=>el.classList.add('hm-in'), i*28);
+    });
+    panel.querySelectorAll('.zone-row').forEach((el,i)=>{
+      el.classList.remove('zr-in');
+      void el.offsetWidth;
+      setTimeout(()=>{
+        el.classList.add('zr-in');
+        const fill=el.querySelector('.zone-bar-fill');
+        if(fill){fill.style.width='0%'; setTimeout(()=>{ fill.style.width=fill.dataset.w+'%'; },80);}
+      }, i*110);
+    });
+    panel.querySelectorAll('.mt-row').forEach((el,i)=>{
+      el.classList.remove('mt-in');
+      void el.offsetWidth;
+      setTimeout(()=>el.classList.add('mt-in'), i*40);
+    });
+    panel.querySelectorAll('.bt-row').forEach((el,i)=>{
+      el.classList.remove('bt-in');
+      void el.offsetWidth;
+      setTimeout(()=>{
+        el.classList.add('bt-in');
+        const fill=el.querySelector('.bt-bar-fill');
+        if(fill){fill.style.width='0%'; setTimeout(()=>{ fill.style.width=fill.dataset.w+'%'; },80);}
+      }, i*120);
+    });
+  });
+
+  if(id==='matrix'&&document.getElementById('mt-table').innerHTML==='') renderMatrix();
+  if(id==='backtest'&&document.getElementById('bt-bars').innerHTML==='') renderBacktest();
+}
+
+/* 히트맵 */
+function renderHeatmap(){
+  const grid=document.getElementById('hm-grid');
+  if(!grid)return;
+  const vals=Object.values(FREQ);
+  const mn=Math.min(...vals), mx=Math.max(...vals);
+  const zoneColor=n=>n<=10?[255,184,0]:n<=20?[20,126,251]:n<=30?[255,59,48]:n<=40?[99,99,102]:[52,199,89];
+  // chart-wrap 페이드
+  const cw=grid.closest('.chart-wrap');
+  if(cw){requestAnimationFrame(()=>cw.classList.add('cw-in'));}
+  grid.innerHTML=Array.from({length:45},(_,i)=>{
+    const n=i+1, cnt=FREQ[n]||0;
+    const t=mx===mn?0.5:(cnt-mn)/(mx-mn);
+    const [r,g,b]=zoneColor(n);
+    const alpha=0.18+t*0.72;
+    const tc=t>0.45?'#fff':'var(--text-primary)';
+    return`<div class="hm-cell" style="background:rgba(${r},${g},${b},${alpha.toFixed(2)});color:${tc}" title="${n}번: ${cnt}회 출현">
+      <span class="hm-num">${n}</span>
+      <span class="hm-cnt">${cnt}</span>
+    </div>`;
+  }).join('');
+  // 셀 순차 cascade
+  requestAnimationFrame(()=>{
+    grid.querySelectorAll('.hm-cell').forEach((el,i)=>{
+      el.style.animationDelay=`${i*28}ms`;
+      setTimeout(()=>el.classList.add('hm-in'), i*28);
+    });
+  });
+}
+
+/* 구간 분포 */
+function renderZone(){
+  const bars=document.getElementById('zone-bars');
+  if(!bars)return;
+  const zones=[
+    {label:'1–10', color:'#FFB800', lo:1,  hi:10},
+    {label:'11–20',color:'#147EFB', lo:11, hi:20},
+    {label:'21–30',color:'#FF3B30', lo:21, hi:30},
+    {label:'31–40',color:'#636366', lo:31, hi:40},
+    {label:'41–45',color:'#34C759', lo:41, hi:45},
+  ];
+  const total=Object.values(FREQ).reduce((a,b)=>a+b,0)||1;
+  const theoretical=[10,10,10,10,5].map(n=>n/45*100);
+  bars.innerHTML=zones.map((z,i)=>{
+    const cnt=ALL.filter(n=>n>=z.lo&&n<=z.hi).reduce((s,n)=>s+(FREQ[n]||0),0);
+    const pct=(cnt/total*100).toFixed(1);
+    const th=theoretical[i].toFixed(1);
+    return`<div class="zone-row">
+      <div class="zone-label">${z.label}</div>
+      <div class="zone-bar-bg">
+        <div class="zone-bar-fill" style="width:0%;background:${z.color}" data-w="${pct}">
+          <span class="zone-pct">${pct}%</span>
+        </div>
+      </div>
+      <div class="zone-cnt">${cnt}회 / 이론 ${th}%</div>
+    </div>`;
+  }).join('');
+  requestAnimationFrame(()=>{
+    const cwZ=bars.closest('.chart-wrap');
+    if(cwZ) cwZ.classList.add('cw-in');
+    document.querySelectorAll('.zone-row').forEach((el,i)=>{
+      setTimeout(()=>{
+        el.classList.add('zr-in');
+        const fill=el.querySelector('.zone-bar-fill');
+        if(fill) setTimeout(()=>{ fill.style.width=fill.dataset.w+'%'; },80);
+      }, i*110);
+    });
+  });
+}
+
+/* 동반출현 매트릭스 */
+function renderMatrix(){
+  const tbl=document.getElementById('mt-table');
+  if(!tbl||!ALL_DRAWS.length)return;
+
+  // 빈도 상위 20개 번호 선택
+  const top20=Object.entries(FREQ).sort((a,b)=>b[1]-a[1]).slice(0,20).map(([n])=>+n).sort((a,b)=>a-b);
+
+  // 동반출현 카운트
+  const co={};
+  top20.forEach(a=>top20.forEach(b=>{if(a!==b)co[`${a}_${b}`]=0;}));
+  ALL_DRAWS.forEach(d=>{
+    const nums=d.numbers||[];
+    top20.forEach(a=>{if(nums.includes(a)){top20.forEach(b=>{if(a!==b&&nums.includes(b))co[`${a}_${b}`]=(co[`${a}_${b}`]||0)+1;});}});
+  });
+
+  const coVals=Object.values(co);
+  const cMax=Math.max(...coVals)||1, cMin=Math.min(...coVals);
+
+  // 헤더
+  let html=`<tr><th></th>${top20.map(n=>`<th>${n}</th>`).join('')}</tr>`;
+  top20.forEach(a=>{
+    html+=`<tr class="mt-row"><th>${a}</th>`;
+    top20.forEach(b=>{
+      if(a===b){html+=`<td class="mt-cell" style="background:var(--border)"></td>`;}
+      else{
+        const v=co[`${a}_${b}`]||0;
+        const t=(v-cMin)/(cMax-cMin||1);
+        const alpha=(0.08+t*0.82).toFixed(2);
+        html+=`<td class="mt-cell" style="background:rgba(0,113,227,${alpha})" title="${a}+${b}: ${v}회"></td>`;
+      }
+    });
+    html+='</tr>';
+  });
+  tbl.innerHTML=html;
+  requestAnimationFrame(()=>{
+    const cwM=tbl.closest('.chart-wrap');
+    if(cwM) cwM.classList.add('cw-in');
+    tbl.querySelectorAll('.mt-row').forEach((el,i)=>{
+      setTimeout(()=>el.classList.add('mt-in'), i*40);
+    });
+  });
+}
+
+/* 백테스트 */
+function renderBacktest(){
+  const btBars=document.getElementById('bt-bars');
+  const btInfo=document.getElementById('bt-info');
+  if(!btBars||!ALL_DRAWS.length)return;
+
+  const ROUNDS=100;
+  const sorted=[...ALL_DRAWS].sort((a,b)=>b.draw_no-a.draw_no);
+  const testDraws=sorted.slice(0,ROUNDS);
+
+  // 임시 FREQ를 ROUNDS회차 이전 데이터로 계산
+  const historicDraws=sorted.slice(ROUNDS);
+  const hFreq={};
+  for(let i=1;i<=45;i++)hFreq[i]=0;
+  historicDraws.forEach(d=>(d.numbers||[]).forEach(n=>{hFreq[n]=(hFreq[n]||0)+1;}));
+
+  // 전략별 시뮬
+  const strats=[
+    {name:'고빈도 집중', fn(){const h=ALL.slice().sort((a,b)=>(hFreq[b]||0)-(hFreq[a]||0));return wP(h.slice(0,15).map(n=>({n,w:hFreq[n]||1})),6);}},
+    {name:'저빈도 집중', fn(){const c=ALL.slice().sort((a,b)=>(hFreq[a]||0)-(hFreq[b]||0));return pN(c.slice(0,15),6);}},
+    {name:'홀짝 3:3',   fn(){return[...wP(ALL.filter(n=>n%2).map(n=>({n,w:hFreq[n]||1})),3),...wP(ALL.filter(n=>!(n%2)).map(n=>({n,w:hFreq[n]||1})),3)].sort((a,b)=>a-b);}},
+    {name:'합계 균형',  fn(){for(let i=0;i<500;i++){const p=wP(ALL.map(n=>({n,w:hFreq[n]||1})),6);if(p.reduce((a,b)=>a+b,0)>=110&&p.reduce((a,b)=>a+b,0)<=155)return p;}return pN(ALL,6);}},
+    {name:'구간 분산',  fn(){const z=[[1,9],[10,19],[20,29],[30,39],[40,45]];const r=[];for(const[lo,hi]of z)r.push(...wP(ALL.filter(n=>n>=lo&&n<=hi).map(n=>({n,w:hFreq[n]||1})),1));r.push(...wP(ALL.filter(n=>!r.includes(n)).map(n=>({n,w:hFreq[n]||1})),1));return r.sort((a,b)=>a-b);}},
+    {name:'순수 랜덤',  fn(){return pN(ALL,6);}},
+  ];
+
+  const results=strats.map(s=>{
+    let hit3=0,hit4=0,hit5=0;
+    testDraws.forEach(d=>{
+      const pick=s.fn();
+      const match=pick.filter(n=>(d.numbers||[]).includes(n)).length;
+      if(match>=5)hit5++;
+      else if(match===4)hit4++;
+      else if(match===3)hit3++;
+    });
+    return{name:s.name,hit3,hit4,hit5,total:hit3+hit4+hit5};
+  });
+
+  const maxTotal=Math.max(...results.map(r=>r.total))||1;
+  btInfo.textContent=`최근 ${ROUNDS}회차 × 각 전략 1세트 시뮬레이션. 3개 일치(3등급 이상) 총 적중 횟수 비교.`;
+  btBars.innerHTML=results.map(r=>{
+    const w=(r.total/maxTotal*100).toFixed(1);
+    return`<div class="bt-row">
+      <div class="bt-name">${r.name}</div>
+      <div class="bt-bar-bg">
+        <div class="bt-bar-fill" style="width:0%;background:var(--accent)" data-w="${w}">
+          <span class="bt-pct">${r.total}회</span>
+        </div>
+      </div>
+      <div class="bt-val">3등:${r.hit3} / 4등:${r.hit4} / 5등:${r.hit5}</div>
+    </div>`;
+  }).join('');
+  requestAnimationFrame(()=>{
+    const cwB=btBars.closest('.chart-wrap');
+    if(cwB) cwB.classList.add('cw-in');
+    btBars.querySelectorAll('.bt-row').forEach((el,i)=>{
+      setTimeout(()=>{
+        el.classList.add('bt-in');
+        const fill=el.querySelector('.bt-bar-fill');
+        if(fill) setTimeout(()=>{ fill.style.width=fill.dataset.w+'%'; },80);
+      }, i*120);
+    });
+  });
+}
+
+function renderDashboard(){
+  renderHeatmap();
+  renderZone();
+  // matrix·backtest는 탭 전환 시 lazy 렌더
+  // 대시보드 타이틀·서브·탭 페이드인
+  requestAnimationFrame(()=>{
+    const dt=document.querySelector('.dash-title');
+    const ds=document.querySelector('.dash-sub');
+    const dts=document.querySelector('.dash-tabs');
+    if(dt) setTimeout(()=>dt.classList.add('dt-in'),100);
+    if(ds) setTimeout(()=>ds.classList.add('ds-in'),200);
+    if(dts) setTimeout(()=>dts.classList.add('dts-in'),320);
+  });
 }
 
 /* ── LOTTO DATA — smok95.github.io에서 실시간 직접 로드 (CORS 허용) ── */
@@ -597,12 +1078,15 @@ async function loadLottoData(){
     }));
 
     console.log(`✅ 실제 데이터 로드 완료 — 총 ${draws.length}회차, 최신 ${latestNo}회`);
+    ALL_DRAWS=draws; /* 대시보드용 캐시 */
 
-    /* 실제 빈도로 카드 다시 생성 + 최근번호 렌더 */
+    /* 실제 빈도로 카드 다시 생성 + 최근번호 + 대시보드 렌더 */
     generate();
     renderRecentDraws(recent, sorted[0].drwNoDate || (sorted[0].date||'').split('T')[0], latestNo, true);
+    renderDashboard();
   }catch(e){
     console.log('기본 빈도 데이터 사용:', e.message);
+    generate();        // 하드코딩 FREQ로 fallback 렌더
     renderRecentLink();
   }
 }
@@ -648,7 +1132,8 @@ function renderRecentLink(){
   if(card)io.observe(card);
 }
 
-generate();
+/* loadLottoData 성공 시 내부에서 generate() 호출.
+   실패(CORS/네트워크) 시 catch 블록에서 fallback generate() 호출 — 더블 렌더 없음 */
 loadLottoData();
 </script>
 </body>
