@@ -152,30 +152,33 @@
 
   .carousel-wrap {
     width: 100%;
+    overflow: hidden;          /* 우측 카드 자연스럽게 클립 */
     opacity: 0; transform: translateY(18px);
     transition: opacity .95s cubic-bezier(.22,1,.36,1), transform .95s cubic-bezier(.22,1,.36,1);
   }
   .carousel-wrap.visible { opacity: 1; transform: translateY(0); }
 
   .carousel {
-    display: flex; gap: 14px;
+    display: flex; gap: 16px;
     overflow-x: scroll;
     scroll-snap-type: x mandatory;
     scroll-snap-stop: always;
-    scroll-padding-left: max(16px, calc((100vw - 1080px) / 2 + 16px));
+    scroll-padding-left: 16px;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    /* 왼쪽: 컨텐츠 정렬 / 오른쪽: 화면 끝까지 */
-    padding: 8px 0 20px max(16px, calc((100vw - 1080px) / 2 + 16px));
+    padding: 12px 16px 24px 16px;
     cursor: grab;
   }
   .carousel::-webkit-scrollbar { display: none; }
   .carousel.grabbing { cursor: grabbing; user-select: none; }
 
-  /* ── CARD — 목업 그대로 ── */
+  /* ── CARD ── */
   .card {
-    flex: 0 0 300px;
-    min-height: 420px;
+    /* flex-basis 대신 width를 명시해서 브라우저 호환성 확보 */
+    flex: none;
+    width: 320px;
+    max-width: 320px;
+    min-height: 440px;
     scroll-snap-align: start;
     background: var(--card);
     border-radius: 18px;
@@ -185,6 +188,7 @@
     transition: background .35s, transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s;
     overflow: hidden;
   }
+  [data-theme="dark"] .card { box-shadow: 0 2px 12px rgba(0,0,0,0.4); }
   .card:hover { transform: scale(1.02); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
   [data-theme="dark"] .card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.45); }
 
@@ -354,7 +358,7 @@
 
 
     :root { --ball-size: 58px; }
-    .card { flex: 0 0 calc(100% - 68px); min-height: 400px; }
+    .card { flex: none; width: calc(100% - 32px); max-width: calc(100% - 32px); min-height: 400px; }
     .week-title { font-size: 26px; }
     .toggle-label { display: none; }
     .nav-inner, .hero, .legend-bar, .bottom-nav, .recent-section { padding-left: 16px; padding-right: 16px; }
@@ -369,7 +373,7 @@
   <div class="nav-inner">
     <div class="nav-left">
       <a class="nav-logo" href="#">Lotto<em>.</em></a>
-      <span class="nav-version">v3.1</span>
+      <span class="nav-version">v3.3</span>
       <span class="nav-date" id="nav-date"></span>
     </div>
     <div class="toggle-wrap">
